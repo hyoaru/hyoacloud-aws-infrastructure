@@ -51,13 +51,13 @@ Resources:
 
 Outputs:
   IamUserMfaSelfManagementArn:
-    Description: "ARN of the MFA Policy"
+    Description: "ARN of the IamUserMfaSelfManagement Policy"
     Value: !Ref IamUserMfaSelfManagement
     Export:
       Name: !Sub "${Environment}-IamUserMfaSelfManagement-arn"
 
   AccountUserCredentialsSelfManagementArn:
-    Description: "ARN of the Account Info Policy"
+    Description: "ARN of the AccountUserCredentialsSelfManagement Policy"
     Value: !Ref AccountUserCredentialsSelfManagement
     Export:
       Name: !Sub "${Environment}-AccountUserCredentialsSelfManagement-arn"
