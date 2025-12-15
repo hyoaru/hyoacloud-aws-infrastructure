@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Global Layer 00: Custom Managed Policies"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  AccountUserCredentialsSelfManagement:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-AccountUserCredentialsSelfManagement"
+      Description: "Allows users to read Account Management service metadata."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowAccountInfoReadSpecific"
+            Effect: Allow
+            Action:
+              - "account:GetAccountInformation"
+            Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
+
+  IamUserMfaSelfManagement:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-IAMUserMFASelfManagement"
+      Description: "Allows users to manage their own MFA devices."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowIAMReadRequired"
+            Effect: Allow
+            Action:
+              - "iam:ListMFADevices"
+              - "iam:ListVirtualMFADevices"
+            Resource: "*"
+
+          - Sid: "AllowSelfMFADeviceManagement"
+            Effect: Allow
+            Action:
+              - "iam:CreateVirtualMFADevice"
+              - "iam:EnableMFADevice"
+              - "iam:ResyncMFADevice"
+              - "iam:DeactivateMFADevice"
+              - "iam:DeleteVirtualMFADevice"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
+
+Outputs:
+  IamUserMfaSelfManagementArn:
+    Description: "ARN of the MFA Policy"
+    Value: !Ref IamUserMfaSelfManagement
+    Export:
+      Name: !Sub "${Environment}-IamUserMfaSelfManagement-arn"
+
+  AccountUserCredentialsSelfManagementArn:
+    Description: "ARN of the Account Info Policy"
+    Value: !Ref AccountUserCredentialsSelfManagement
+    Export:
+      Name: !Sub "${Environment}-AccountUserCredentialsSelfManagement-arn"
