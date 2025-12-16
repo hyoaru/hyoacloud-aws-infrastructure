@@ -31,7 +31,6 @@ fi
 
 # If a parameter file exists for this env, read it. Otherwise, use empty defaults.
 if [[ -f "$PARAMETER_FILE" ]]; then
-  echo "Using parameter file: ${PARAMETER_FILE}"
   # Convert JSON file to "Key=Value" format for CLI
   PARAMS=$(jq -r 'to_entries | map("\(.key)=\(.value)") | .[]' $PARAMETER_FILE)
   PARAMETER_OVERRIDES="--parameter-overrides $PARAMS"
@@ -40,18 +39,18 @@ else
   PARAMETER_OVERRIDES=""
 fi
 
-echo "-"
-echo "DEPLOYING GLOBAL RESOURCE"
+echo -e "\nDEPLOYING GLOBAL RESOURCE"
 echo "Stack: ${STACK_NAME}"
 echo "Region: ${REGION}"
-echo "Template: ${TEMPLATE_FILE}"
-echo "-"
+echo -e "Template: ${TEMPLATE_FILE}\n"
 
 # Deploy
 aws cloudformation deploy \
-  --template-file "$TEMPLATE_FILE" \
-  --stack-name "$STACK_NAME" \
-  --region "$REGION" \
+  --template-file "${TEMPLATE_FILE}" \
+  --stack-name "${STACK_NAME}" \
+  --region "${REGION}" \
   --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
   --no-fail-on-empty-changeset \
   $PARAMETER_OVERRIDES
+
+echo "Success! Stack ${STACK_NAME} is active in ${REGION}"
