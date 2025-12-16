@@ -42,7 +42,7 @@ fi
 echo -e "\nDEPLOYING GLOBAL RESOURCE"
 echo "Stack: ${STACK_NAME}"
 echo "Region: ${REGION}"
-echo -e "Template: ${TEMPLATE_FILE}\n"
+echo "Template: ${TEMPLATE_FILE}"
 
 # Deploy
 aws cloudformation deploy \

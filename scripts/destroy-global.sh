@@ -24,7 +24,7 @@ STACK_NAME="global-${ENVIRONMENT}-${LAYER}"
 
 echo -e "\nDESTROYING GLOBAL RESOURCE"
 echo "Stack: ${STACK_NAME}"
-echo -e "Region: ${REGION}\n"
+echo "Region: ${REGION}"
 
 # Destroy
 aws cloudformation delete-stack \
