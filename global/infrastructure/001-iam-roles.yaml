@@ -24,6 +24,15 @@ Resources:
               - "sts:AssumeRole"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      Tags:
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "001-iam-roles"
 
   Ec2SsmHostManagementProfile:
     Type: AWS::IAM::InstanceProfile
@@ -35,12 +44,12 @@ Resources:
 Outputs:
   Ec2SsmHostManagementArn:
     Description: "ARN of the EC2SSMHostManagement role"
-    Value: !Ref Ec2SsmHostManagementRole
+    Value: !GetAtt Ec2SsmHostManagementRole.Arn
     Export:
       Name: !Sub "${Environment}-Ec2SsmHostManagementRole-arn"
 
   Ec2SsmHostManagementProfileArn:
     Description: "ARN of the EC2SSMHostManagement profile"
-    Value: !Ref Ec2SsmHostManagementProfile
+    Value: !GetAtt Ec2SsmHostManagementProfile.Arn
     Export:
       Name: !Sub "${Environment}-Ec2SsmHostManagementProfile-arn"
