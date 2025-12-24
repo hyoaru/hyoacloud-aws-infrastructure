@@ -168,66 +168,66 @@ Resources:
 
 Outputs:
   # VPC
-  MainVpcArn:
-    Description: "ARN of the MainVpc"
-    Value: !Ref MainVpc
+  MainVpcId:
+    Description: "ID of the MainVpc"
+    Value: !GetAtt MainVpc.VpcId
     Export:
-      Name: !Sub "${Environment}-MainVpc-arn"
+      Name: !Sub "${Environment}-MainVpc-id"
   # Subnets
-  MainPublicSubnet1Arn:
-    Description: "ARN of the MainPublicSubnet1"
-    Value: !Ref MainPublicSubnet1
+  MainPublicSubnet1Id:
+    Description: "ID of the MainPublicSubnet1"
+    Value: !GetAtt MainPublicSubnet1.SubnetId
     Export:
-      Name: !Sub "${Environment}-MainPublicSubnet1-arn"
-  MainPublicSubnet2Arn:
-    Description: "ARN of the MainPublicSubnet2"
-    Value: !Ref MainPublicSubnet2
+      Name: !Sub "${Environment}-MainPublicSubnet1-id"
+  MainPublicSubnet2Id:
+    Description: "ID of the MainPublicSubnet2"
+    Value: !GetAtt MainPublicSubnet2.SubnetId
     Export:
-      Name: !Sub "${Environment}-MainPublicSubnet2-arn"
-  MainPrivateSubnet1Arn:
-    Description: "ARN of the MainPrivateSubnet1"
-    Value: !Ref MainPrivateSubnet1
+      Name: !Sub "${Environment}-MainPublicSubnet2-id"
+  MainPrivateSubnet1Id:
+    Description: "ID of the MainPrivateSubnet1"
+    Value: !GetAtt MainPrivateSubnet1.SubnetId
     Export:
-      Name: !Sub "${Environment}-MainPrivateSubnet1-arn"
-  MainPrivateSubnet2Arn:
-    Description: "ARN of the MainPrivateSubnet2"
-    Value: !Ref MainPrivateSubnet2
+      Name: !Sub "${Environment}-MainPrivateSubnet1-id"
+  MainPrivateSubnet2Id:
+    Description: "ID of the MainPrivateSubnet2"
+    Value: !GetAtt MainPrivateSubnet2.SubnetId
     Export:
-      Name: !Sub "${Environment}-MainPrivateSubnet2-arn"
+      Name: !Sub "${Environment}-MainPrivateSubnet2-id"
   # Route tables
-  MainPublicRouteTableArn:
-    Description: "ARN of the MainPublicRouteTable"
-    Value: !Ref MainPublicRouteTable
+  MainPublicRouteTableId:
+    Description: "ID of the MainPublicRouteTable"
+    Value: !GetAtt MainPublicRouteTable.RouteTableId
     Export:
-      Name: !Sub "${Environment}-MainPublicRouteTable-arn"
-  MainPrivateRouteTable1Arn:
-    Description: "ARN of the MainPrivateRouteTable1"
-    Value: !Ref MainPrivateRouteTable1
+      Name: !Sub "${Environment}-MainPublicRouteTable-id"
+  MainPrivateRouteTable1Id:
+    Description: "ID of the MainPrivateRouteTable1"
+    Value: !GetAtt MainPrivateRouteTable1.RouteTableId
     Export:
-      Name: !Sub "${Environment}-MainPrivateRouteTable1-arn"
-  MainPrivateRouteTable2Arn:
-    Description: "ARN of the MainPrivateRouteTable2"
-    Value: !Ref MainPrivateRouteTable2
+      Name: !Sub "${Environment}-MainPrivateRouteTable1-id"
+  MainPrivateRouteTable2Id:
+    Description: "ID of the MainPrivateRouteTable2"
+    Value: !GetAtt MainPrivateRouteTable2.RouteTableId
     Export:
-      Name: !Sub "${Environment}-MainPrivateRouteTable2-arn"
+      Name: !Sub "${Environment}-MainPrivateRouteTable2-id"
   # Route table associations
-  MainPublicSubnet1RouteTableAssociationArn:
-    Description: "ARN of the MainPublicSubnet1RouteTableAssociation"
-    Value: !Ref MainPublicSubnet1RouteTableAssociation
+  MainPublicSubnet1RouteTableAssociationId:
+    Description: "ID of the MainPublicSubnet1RouteTableAssociation"
+    Value: !GetAtt MainPublicSubnet1RouteTableAssociation.Id
     Export:
-      Name: !Sub "${Environment}-MainPublicSubnet1RouteTableAssociation-arn"
-  MainPublicSubnet2RouteTableAssociationArn:
-    Description: "ARN of the MainPublicSubnet2RouteTableAssociation"
-    Value: !Ref MainPublicSubnet2RouteTableAssociation
+      Name: !Sub "${Environment}-MainPublicSubnet1RouteTableAssociation-id"
+  MainPublicSubnet2RouteTableAssociationId:
+    Description: "ID of the MainPublicSubnet2RouteTableAssociation"
+    Value: !GetAtt MainPublicSubnet2RouteTableAssociation.Id
     Export:
-      Name: !Sub "${Environment}-MainPublicSubnet2RouteTableAssociation-arn"
-  MainPrivateSubnet1RouteTableAssociationArn:
-    Description: "ARN of the MainPrivateSubnet1RouteTableAssociation"
-    Value: !Ref MainPrivateSubnet1RouteTableAssociation
+      Name: !Sub "${Environment}-MainPublicSubnet2RouteTableAssociation-id"
+  MainPrivateSubnet1RouteTableAssociationId:
+    Description: "ID of the MainPrivateSubnet1RouteTableAssociation"
+    Value: !GetAtt MainPrivateSubnet1RouteTableAssociation.Id
     Export:
-      Name: !Sub "${Environment}-MainPrivateSubnet1RouteTableAssociation-arn"
-  MainPrivateSubnet2RouteTableAssociationArn:
-    Description: "ARN of the MainPrivateSubnet2RouteTableAssociation"
-    Value: !Ref MainPrivateSubnet2RouteTableAssociation
+      Name: !Sub "${Environment}-MainPrivateSubnet1RouteTableAssociation-id"
+  MainPrivateSubnet2RouteTableAssociationId:
+    Description: "ID of the MainPrivateSubnet2RouteTableAssociation"
+    Value: !GetAtt MainPrivateSubnet2RouteTableAssociation.Id
     Export:
-      Name: !Sub "${Environment}-MainPrivateSubnet2RouteTableAssociation-arn"
+      Name: !Sub "${Environment}-MainPrivateSubnet2RouteTableAssociation-id"
