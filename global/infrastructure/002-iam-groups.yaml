@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Global Layer 002: Custom Managed User Groups"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  AdministratorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-Administrators"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
+
+  UsersGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-Users"
+      ManagedPolicyArns:
+        - Fn::ImportValue: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-arn"
+
+  DevOpsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-DevOps"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        - "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+        - "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
+        - "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
+        - "arn:aws:iam::aws:policy/AWSCloudFormationFullAccess"
+        - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
+        - "arn:aws:iam::aws:policy/IAMFullAccess"
+        - "arn:aws:iam::aws:policy/IAMReadOnlyAccess"
+        - Fn::ImportValue: !Sub "${Environment}-IamPassRoleEc2Policy-arn"
+
+Outputs:
+  AdministratorsGroupArn:
+    Description: "ARN of the Administrators group"
+    Value: !Ref AdministratorsGroup
+    Export:
+      Name: !Sub "${Environment}-AdministratorsGroup-arn"
+
+  UsersGroupArn:
+    Description: "ARN of the Users group"
+    Value: !Ref UsersGroup
+    Export:
+      Name: !Sub "${Environment}-UsersGroup-arn"
+
+  DevOpsGroupArn:
+    Description: "ARN of the DevOps group"
+    Value: !Ref DevOpsGroup
+    Export:
+      Name: !Sub "${Environment}-DevOpsGroup-arn"
