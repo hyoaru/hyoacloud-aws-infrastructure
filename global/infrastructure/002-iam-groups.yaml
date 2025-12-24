@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 002: Custom Managed User Groups"
+Description: "Global Layer 002: User Groups"
 
 Parameters:
   Environment:
@@ -14,7 +14,6 @@ Resources:
       GroupName: !Sub "${Environment}-Administrators"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AdministratorAccess"
-
   UsersGroup:
     Type: AWS::IAM::Group
     Properties:
@@ -22,7 +21,6 @@ Resources:
       ManagedPolicyArns:
         - Fn::ImportValue: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-arn"
         - Fn::ImportValue: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-arn"
-
   DevOpsGroup:
     Type: AWS::IAM::Group
     Properties:
@@ -41,19 +39,17 @@ Resources:
 
 Outputs:
   AdministratorsGroupArn:
-    Description: "ARN of the Administrators group"
+    Description: "ARN of the AdministratorsGroup"
     Value: !GetAtt AdministratorsGroup.Arn
     Export:
       Name: !Sub "${Environment}-AdministratorsGroup-arn"
-
   UsersGroupArn:
-    Description: "ARN of the Users group"
+    Description: "ARN of the UsersGroup"
     Value: !GetAtt UsersGroup.Arn
     Export:
       Name: !Sub "${Environment}-UsersGroup-arn"
-
   DevOpsGroupArn:
-    Description: "ARN of the DevOps group"
+    Description: "ARN of the DevOpsGroup"
     Value: !GetAtt DevOpsGroup.Arn
     Export:
       Name: !Sub "${Environment}-DevOpsGroup-arn"
