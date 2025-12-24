@@ -42,18 +42,18 @@ Resources:
 Outputs:
   AdministratorsGroupArn:
     Description: "ARN of the Administrators group"
-    Value: !Ref AdministratorsGroup
+    Value: !GetAtt AdministratorsGroup.Arn
     Export:
       Name: !Sub "${Environment}-AdministratorsGroup-arn"
 
   UsersGroupArn:
     Description: "ARN of the Users group"
-    Value: !Ref UsersGroup
+    Value: !GetAtt UsersGroup.Arn
     Export:
       Name: !Sub "${Environment}-UsersGroup-arn"
 
   DevOpsGroupArn:
     Description: "ARN of the DevOps group"
-    Value: !Ref DevOpsGroup
+    Value: !GetAtt DevOpsGroup.Arn
     Export:
       Name: !Sub "${Environment}-DevOpsGroup-arn"
