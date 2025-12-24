@@ -22,7 +22,7 @@ Resources:
               - "account:GetAccountInformation"
             Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
 
-  IamUserMfaSelfManagement:
+  IAMUserMFASelfManagement:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: !Sub "${Environment}-IAMUserMFASelfManagement"
@@ -50,13 +50,13 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
 
 Outputs:
-  IamUserMfaSelfManagementArn:
-    Description: "ARN of the IamUserMfaSelfManagement Policy"
-    Value: !Ref IamUserMfaSelfManagement
+  IAMUserMFASelfManagementARN:
+    Description: "ARN of the IAMUserMFASelfManagement Policy"
+    Value: !Ref IAMUserMFASelfManagement
     Export:
-      Name: !Sub "${Environment}-IamUserMfaSelfManagement-arn"
+      Name: !Sub "${Environment}-IAMUserMFASelfManagement-arn"
 
-  AccountUserCredentialsSelfManagementArn:
+  AccountUserCredentialsSelfManagementARN:
     Description: "ARN of the AccountUserCredentialsSelfManagement Policy"
     Value: !Ref AccountUserCredentialsSelfManagement
     Export:
