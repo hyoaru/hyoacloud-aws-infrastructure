@@ -31,7 +31,7 @@ Resources:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !ImportValue
-        Fn::Sub: "${Environment}-MainVpc-arn"
+        Fn::Sub: "${Environment}-MainVpc-id"
       InternetGatewayId: !Ref MainInternetGateway
   # Routes
   MainPublicRoute:
@@ -39,26 +39,26 @@ Resources:
     DependsOn: MainInternetGateway
     Properties:
       RouteTableId: !ImportValue
-        Fn::Sub: "${Environment}-MainPublicRouteTable-arn"
+        Fn::Sub: "${Environment}-MainPublicRouteTable-id"
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref MainInternetGateway
 
 Outputs:
   # Internet gateway
-  MainInternetGatewayArn:
-    Description: "ARN of the MainInternetGateway"
-    Value: !Ref MainInternetGateway
+  MainInternetGatewayId:
+    Description: "ID of the MainInternetGateway"
+    Value: !GetAtt MainInternetGateway.InternetGatewayId
     Export:
-      Name: !Sub "${Environment}-MainInternetGateway-arn"
+      Name: !Sub "${Environment}-MainInternetGateway-id"
   # VPC gateway attacment
-  MainInternetGatewayVpcAttachmentArn:
-    Description: "ARN of the MainInternetGatewayVpcAttachment"
+  MainInternetGatewayVpcAttachmentId:
+    Description: "ID of the MainInternetGatewayVpcAttachment"
     Value: !Ref MainInternetGatewayVpcAttachment
     Export:
-      Name: !Sub "${Environment}-MainInternetGatewayVpcAttachment-arn"
+      Name: !Sub "${Environment}-MainInternetGatewayVpcAttachment-id"
   # Routes
-  MainPublicRouteArn:
-    Description: "ARN of the MainPublicRoute"
+  MainPublicRouteId:
+    Description: "ID of the MainPublicRoute"
     Value: !Ref MainPublicRoute
     Export:
-      Name: !Sub "${Environment}-MainPublicRoute-arn"
+      Name: !Sub "${Environment}-MainPublicRoute-id"
