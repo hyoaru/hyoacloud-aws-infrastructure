@@ -8,7 +8,7 @@ Parameters:
     AllowedValues: [dev, stage, prod]
 
 Resources:
-  AccountUserCredentialsSelfManagement:
+  AccountUserCredentialsSelfManagementPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: !Sub "${Environment}-AccountUserCredentialsSelfManagement"
@@ -22,7 +22,7 @@ Resources:
               - "account:GetAccountInformation"
             Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
 
-  IAMUserMFASelfManagement:
+  IamUserMfaSelfManagementPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: !Sub "${Environment}-IAMUserMFASelfManagement"
@@ -49,15 +49,34 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
               - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
 
-Outputs:
-  IAMUserMFASelfManagementARN:
-    Description: "ARN of the IAMUserMFASelfManagement Policy"
-    Value: !Ref IAMUserMFASelfManagement
-    Export:
-      Name: !Sub "${Environment}-IAMUserMFASelfManagement-arn"
+  IamPassRoleEc2Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-IAMPassRoleEC2"
+      Description: "Allows users to assign specific IAM roles to EC2 instances to enable service-to-service permissions."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowEC2RoleDelegation"
+            Effect: Allow
+            Action: "iam:PassRole"
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-EC2*"
 
-  AccountUserCredentialsSelfManagementARN:
-    Description: "ARN of the AccountUserCredentialsSelfManagement Policy"
-    Value: !Ref AccountUserCredentialsSelfManagement
+Outputs:
+  IamUserMfaSelfManagementPolicyArn:
+    Description: "ARN of the IAMUserMFASelfManagement policy"
+    Value: !Ref IamUserMfaSelfManagementPolicy
     Export:
-      Name: !Sub "${Environment}-AccountUserCredentialsSelfManagement-arn"
+      Name: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-arn"
+
+  AccountUserCredentialsSelfManagementArn:
+    Description: "ARN of the AccountUserCredentialsSelfManagement policy"
+    Value: !Ref AccountUserCredentialsSelfManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-arn"
+
+  IamPassRoleEc2PolicyArn:
+    Description: "ARN of the IAMPassRoleEC2 policy"
+    Value: !Ref IamPassRoleEc2Policy
+    Export:
+      Name: !Sub "${Environment}-IamPassRoleEc2Policy-arn"

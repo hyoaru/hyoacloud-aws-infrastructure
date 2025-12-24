@@ -8,7 +8,7 @@ Parameters:
     AllowedValues: [dev, stage, prod]
 
 Resources:
-  EC2SSMHostManagement:
+  Ec2SsmHostManagementRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${Environment}-EC2SSMHostManagement"
@@ -25,22 +25,22 @@ Resources:
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 
-  EC2SSMHostManagementProfile:
+  Ec2SsmHostManagementProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
       InstanceProfileName: !Sub "${Environment}-EC2SSMHostManagement-profile"
       Roles:
-        - !Ref EC2SSMHostManagement
+        - !Ref Ec2SsmHostManagementRole
 
 Outputs:
-  EC2SSMHostManagementARN:
+  Ec2SsmHostManagementArn:
     Description: "ARN of the EC2SSMHostManagement role"
-    Value: !Ref EC2SSMHostManagement
+    Value: !Ref Ec2SsmHostManagementRole
     Export:
-      Name: !Sub "${Environment}-EC2SSMHostManagement-arn"
+      Name: !Sub "${Environment}-Ec2SsmHostManagementRole-arn"
 
-  EC2SSMHostManagementProfileARN:
+  Ec2SsmHostManagementProfileArn:
     Description: "ARN of the EC2SSMHostManagement profile"
-    Value: !Ref EC2SSMHostManagementProfile
+    Value: !Ref Ec2SsmHostManagementProfile
     Export:
-      Name: !Sub "${Environment}-EC2SSMHostManagementProfile-arn"
+      Name: !Sub "${Environment}-Ec2SsmHostManagementProfile-arn"
