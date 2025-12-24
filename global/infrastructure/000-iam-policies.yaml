@@ -65,18 +65,18 @@ Resources:
 Outputs:
   IamUserMfaSelfManagementPolicyArn:
     Description: "ARN of the IAMUserMFASelfManagement policy"
-    Value: !Ref IamUserMfaSelfManagementPolicy
+    Value: !GetAtt IamUserMfaSelfManagementPolicy.Arn
     Export:
       Name: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-arn"
 
   AccountUserCredentialsSelfManagementArn:
     Description: "ARN of the AccountUserCredentialsSelfManagement policy"
-    Value: !Ref AccountUserCredentialsSelfManagementPolicy
+    Value: !GetAtt AccountUserCredentialsSelfManagementPolicy.Arn
     Export:
       Name: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-arn"
 
   IamPassRoleEc2PolicyArn:
     Description: "ARN of the IAMPassRoleEC2 policy"
-    Value: !Ref IamPassRoleEc2Policy
+    Value: !GetAtt IamPassRoleEc2Policy.Arn
     Export:
       Name: !Sub "${Environment}-IamPassRoleEc2Policy-arn"
