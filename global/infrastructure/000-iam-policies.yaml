@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 00: Custom Managed Policies"
+Description: "Global Layer 000: Custom Managed Policies"
 
 Parameters:
   Environment:
