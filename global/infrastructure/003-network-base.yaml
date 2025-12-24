@@ -1,0 +1,233 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Global Layer 003: Base Network Resources"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  Region:
+    Type: String
+    Description: "The region where the resources will reside."
+
+Resources:
+  # VPC
+  MainVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-vpc"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  # Subnets
+  MainPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.0.0/20
+      AvailabilityZone: !Sub "${Region}a"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-public1-${Region}a"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  MainPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.16.0/20
+      AvailabilityZone: !Sub "${Region}b"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-public2-${Region}b"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  MainPrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.128.0/20
+      AvailabilityZone: !Sub "${Region}a"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-private1-${Region}a"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  MainPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.144.0/20
+      AvailabilityZone: !Sub "${Region}b"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-private2-${Region}b"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  # Route tables
+  MainPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MainVpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-rtb-public"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  MainPrivateRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MainVpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-rtb-private1-${Region}a"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  MainPrivateRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MainVpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-rtb-private2-${Region}b"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Project
+          Value: "core"
+        - Key: Layer
+          Value: "003-network-base"
+  # Subnet route table associations
+  MainPublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPublicSubnet1
+      RouteTableId: !Ref MainPublicRouteTable
+  MainPublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPublicSubnet2
+      RouteTableId: !Ref MainPublicRouteTable
+  MainPrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPrivateSubnet1
+      RouteTableId: !Ref MainPrivateRouteTable1
+  MainPrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPrivateSubnet2
+      RouteTableId: !Ref MainPrivateRouteTable2
+
+Outputs:
+  # VPC
+  MainVpcArn:
+    Description: "ARN of the MainVpc"
+    Value: !Ref MainVpc
+    Export:
+      Name: !Sub "${Environment}-MainVpc-arn"
+  # Subnets
+  MainPublicSubnet1Arn:
+    Description: "ARN of the MainPublicSubnet1"
+    Value: !Ref MainPublicSubnet1
+    Export:
+      Name: !Sub "${Environment}-MainPublicSubnet1-arn"
+  MainPublicSubnet2Arn:
+    Description: "ARN of the MainPublicSubnet2"
+    Value: !Ref MainPublicSubnet2
+    Export:
+      Name: !Sub "${Environment}-MainPublicSubnet2-arn"
+  MainPrivateSubnet1Arn:
+    Description: "ARN of the MainPrivateSubnet1"
+    Value: !Ref MainPrivateSubnet1
+    Export:
+      Name: !Sub "${Environment}-MainPrivateSubnet1-arn"
+  MainPrivateSubnet2Arn:
+    Description: "ARN of the MainPrivateSubnet2"
+    Value: !Ref MainPrivateSubnet2
+    Export:
+      Name: !Sub "${Environment}-MainPrivateSubnet2-arn"
+  # Route tables
+  MainPublicRouteTableArn:
+    Description: "ARN of the MainPublicRouteTable"
+    Value: !Ref MainPublicRouteTable
+    Export:
+      Name: !Sub "${Environment}-MainPublicRouteTable-arn"
+  MainPrivateRouteTable1Arn:
+    Description: "ARN of the MainPrivateRouteTable1"
+    Value: !Ref MainPrivateRouteTable1
+    Export:
+      Name: !Sub "${Environment}-MainPrivateRouteTable1-arn"
+  MainPrivateRouteTable2Arn:
+    Description: "ARN of the MainPrivateRouteTable2"
+    Value: !Ref MainPrivateRouteTable2
+    Export:
+      Name: !Sub "${Environment}-MainPrivateRouteTable2-arn"
+  # Route table associations
+  MainPublicSubnet1RouteTableAssociationArn:
+    Description: "ARN of the MainPublicSubnet1RouteTableAssociation"
+    Value: !Ref MainPublicSubnet1RouteTableAssociation
+    Export:
+      Name: !Sub "${Environment}-MainPublicSubnet1RouteTableAssociation-arn"
+  MainPublicSubnet2RouteTableAssociationArn:
+    Description: "ARN of the MainPublicSubnet2RouteTableAssociation"
+    Value: !Ref MainPublicSubnet2RouteTableAssociation
+    Export:
+      Name: !Sub "${Environment}-MainPublicSubnet2RouteTableAssociation-arn"
+  MainPrivateSubnet1RouteTableAssociationArn:
+    Description: "ARN of the MainPrivateSubnet1RouteTableAssociation"
+    Value: !Ref MainPrivateSubnet1RouteTableAssociation
+    Export:
+      Name: !Sub "${Environment}-MainPrivateSubnet1RouteTableAssociation-arn"
+  MainPrivateSubnet2RouteTableAssociationArn:
+    Description: "ARN of the MainPrivateSubnet2RouteTableAssociation"
+    Value: !Ref MainPrivateSubnet2RouteTableAssociation
+    Export:
+      Name: !Sub "${Environment}-MainPrivateSubnet2RouteTableAssociation-arn"
