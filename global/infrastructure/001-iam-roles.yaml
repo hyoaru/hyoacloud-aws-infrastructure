@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Global Layer 001: Custom Managed Roles"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  EC2SSMHostManagement:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-EC2SSMHostManagement"
+      Description: "This IAM Instance Profile grants Amazon EC2 instances the minimum necessary permissions to register and function as managed nodes within AWS Systems Manager (SSM)."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+
+  EC2SSMHostManagementProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub "${Environment}-EC2SSMHostManagement-profile"
+      Roles:
+        - !Ref EC2SSMHostManagement
+
+Outputs:
+  EC2SSMHostManagementARN:
+    Description: "ARN of the EC2SSMHostManagement role"
+    Value: !Ref EC2SSMHostManagement
+    Export:
+      Name: !Sub "${Environment}-EC2SSMHostManagement-arn"
+
+  EC2SSMHostManagementProfileARN:
+    Description: "ARN of the EC2SSMHostManagement profile"
+    Value: !Ref EC2SSMHostManagementProfile
+    Export:
+      Name: !Sub "${Environment}-EC2SSMHostManagementProfile-arn"
