@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 001: Custom Managed Roles"
+Description: "Global Layer 001: Roles"
 
 Parameters:
   Environment:
@@ -18,10 +18,8 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service:
-                - "ec2.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
+              Service: "ec2.amazonaws.com"
+            Action: "sts:AssumeRole"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       Tags:
@@ -33,23 +31,25 @@ Resources:
           Value: "core"
         - Key: Layer
           Value: "001-iam-roles"
-
   Ec2SsmHostManagementProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: !Sub "${Environment}-EC2SSMHostManagement-profile"
-      Roles:
-        - !Ref Ec2SsmHostManagementRole
+      InstanceProfileName: !Sub "${Environment}-EC2SSMHostManagementProfile"
+      Roles: !Ref Ec2SsmHostManagementRole
 
 Outputs:
-  Ec2SsmHostManagementArn:
-    Description: "ARN of the EC2SSMHostManagement role"
+  Ec2SsmHostManagementRoleArn:
+    Description: "ARN of the Ec2SsmHostManagementRole"
     Value: !GetAtt Ec2SsmHostManagementRole.Arn
     Export:
       Name: !Sub "${Environment}-Ec2SsmHostManagementRole-arn"
-
+  Ec2SsmHostManagementRoleId:
+    Description: "ID of the Ec2SsmHostManagementRole"
+    Value: !GetAtt Ec2SsmHostManagementRole.RoleId
+    Export:
+      Name: !Sub "${Environment}-Ec2SsmHostManagementRole-id"
   Ec2SsmHostManagementProfileArn:
-    Description: "ARN of the EC2SSMHostManagement profile"
+    Description: "ARN of the EC2SSMHostManagementProfile"
     Value: !GetAtt Ec2SsmHostManagementProfile.Arn
     Export:
       Name: !Sub "${Environment}-Ec2SsmHostManagementProfile-arn"
