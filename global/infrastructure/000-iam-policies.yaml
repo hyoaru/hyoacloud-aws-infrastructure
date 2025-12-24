@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 000: Custom Managed Policies"
+Description: "Global Layer 000: Managed Policies"
 
 Parameters:
   Environment:
@@ -21,7 +21,6 @@ Resources:
             Action:
               - "account:GetAccountInformation"
             Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
-
   IamUserMfaSelfManagementPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -48,7 +47,6 @@ Resources:
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
               - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
-
   IamPassRoleEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -64,19 +62,32 @@ Resources:
 
 Outputs:
   IamUserMfaSelfManagementPolicyArn:
-    Description: "ARN of the IAMUserMFASelfManagement policy"
-    Value: !Ref IamUserMfaSelfManagementPolicy
+    Description: "ARN of the IamUserMfaSelfManagementPolicy"
+    Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
     Export:
       Name: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-arn"
-
+  IamUserMfaSelfManagementPolicyId:
+    Description: "ID of the IamUserMfaSelfManagementPolicy"
+    Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyId"
+    Export:
+      Name: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-id"
   AccountUserCredentialsSelfManagementArn:
-    Description: "ARN of the AccountUserCredentialsSelfManagement policy"
-    Value: !Ref AccountUserCredentialsSelfManagementPolicy
+    Description: "ARN of the AccountUserCredentialsSelfManagement"
+    Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyArn"
     Export:
       Name: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-arn"
-
+  AccountUserCredentialsSelfManagementId:
+    Description: "ID of the AccountUserCredentialsSelfManagement"
+    Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyId"
+    Export:
+      Name: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-id"
   IamPassRoleEc2PolicyArn:
-    Description: "ARN of the IAMPassRoleEC2 policy"
-    Value: !Ref IamPassRoleEc2Policy
+    Description: "ARN of the IamPassRoleEc2Policy"
+    Value: !GetAtt "IamPassRoleEc2Policy.PolicyArn"
     Export:
       Name: !Sub "${Environment}-IamPassRoleEc2Policy-arn"
+  IamPassRoleEc2PolicyId:
+    Description: "ID of the IamPassRoleEc2Policy"
+    Value: !GetAtt "IamPassRoleEc2Policy.PolicyId"
+    Export:
+      Name: !Sub "${Environment}-IamPassRoleEc2Policy-id"
