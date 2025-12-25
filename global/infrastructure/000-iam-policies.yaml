@@ -11,7 +11,7 @@ Resources:
   AccountUserCredentialsSelfManagementPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Sub "${Environment}-AccountUserCredentialsSelfManagement"
+      ManagedPolicyName: "AccountUserCredentialsSelfManagement"
       Description: "Allows users to read Account Management service metadata."
       PolicyDocument:
         Version: "2012-10-17"
@@ -24,7 +24,7 @@ Resources:
   IamUserMfaSelfManagementPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Sub "${Environment}-IAMUserMFASelfManagement"
+      ManagedPolicyName: "IAMUserMFASelfManagement"
       Description: "Allows users to manage their own MFA devices."
       PolicyDocument:
         Version: "2012-10-17"
@@ -59,28 +59,77 @@ Resources:
             Effect: Allow
             Action: "iam:PassRole"
             Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-EC2*"
+  SsmEnvironmentRestrictedPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-SSMEnvironmentRestricted"
+      Description: !Sub "Allows SSM Session Manager access only to ${Environment} instances."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "SSMConnectRestrictedToEnvironment"
+            Effect: Allow
+            Action:
+              - "ssm:StartSession"
+            Resource:
+              - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+              Bool:
+                "aws:MultiFactorAuthPresent": "true"
+          - Sid: "SSMGeneralActions"
+            Effect: Allow
+            Action:
+              - "ssm:DescribeSessions"
+              - "ssm:GetConnectionStatus"
+              - "ssm:DescribeInstanceInformation"
+              - "ssm:TerminateSession"
+              - "ssm:ResumeSession"
+            Resource: "*"
+  DevOpsBasePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-DevOpsBase"
+      Description: !Sub "Consolidated base DevOps permissions for ${Environment}"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "InfrastructureManagement"
+            Effect: Allow
+            Action:
+              - "ec2:*"
+              - "s3:*"
+              - "vpc:*"
+              - "cloudwatch:*"
+              - "cloudformation:*"
+              - "ssm:*"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   IamUserMfaSelfManagementPolicyArn:
     Description: "ARN of the IamUserMfaSelfManagementPolicy"
     Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
     Export:
-      Name: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-arn"
+      Name: "IamUserMfaSelfManagementPolicy-arn"
   IamUserMfaSelfManagementPolicyId:
     Description: "ID of the IamUserMfaSelfManagementPolicy"
     Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyId"
     Export:
-      Name: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-id"
+      Name: "IamUserMfaSelfManagementPolicy-id"
   AccountUserCredentialsSelfManagementArn:
     Description: "ARN of the AccountUserCredentialsSelfManagement"
     Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyArn"
     Export:
-      Name: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-arn"
+      Name: "AccountUserCredentialsSelfManagementPolicy-arn"
   AccountUserCredentialsSelfManagementId:
     Description: "ID of the AccountUserCredentialsSelfManagement"
     Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyId"
     Export:
-      Name: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-id"
+      Name: "AccountUserCredentialsSelfManagementPolicy-id"
   IamPassRoleEc2PolicyArn:
     Description: "ARN of the IamPassRoleEc2Policy"
     Value: !GetAtt "IamPassRoleEc2Policy.PolicyArn"
@@ -91,3 +140,23 @@ Outputs:
     Value: !GetAtt "IamPassRoleEc2Policy.PolicyId"
     Export:
       Name: !Sub "${Environment}-IamPassRoleEc2Policy-id"
+  SsmRestrictedPolicyArn:
+    Description: "ARN of the IamPassRoleEc2Policy"
+    Value: !Ref SsmEnvironmentRestrictedPolicy
+    Export:
+      Name: !Sub "${Environment}-SsmRestrictedPolicy-arn"
+  SsmRestrictedPolicyId:
+    Description: "ID of the IamPassRoleEc2Policy"
+    Value: !Ref SsmEnvironmentRestrictedPolicy
+    Export:
+      Name: !Sub "${Environment}-SsmRestrictedPolicy-id"
+  DevOpsBasePolicyArn:
+    Description: "ARN of the DevOpsBasePolicy"
+    Value: !Ref DevOpsBasePolicy
+    Export:
+      Name: !Sub "${Environment}-DevOpsBasePolicy-arn"
+  DevOpsBasePolicyId:
+    Description: "ID of the DevOpsBasePolicy"
+    Value: !Ref DevOpsBasePolicy
+    Export:
+      Name: !Sub "${Environment}-DevOpsBasePolicy-id"

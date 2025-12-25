@@ -17,25 +17,18 @@ Resources:
   UsersGroup:
     Type: AWS::IAM::Group
     Properties:
-      GroupName: !Sub "${Environment}-Users"
+      GroupName: "Users"
       ManagedPolicyArns:
-        - Fn::ImportValue: !Sub "${Environment}-IamUserMfaSelfManagementPolicy-arn"
-        - Fn::ImportValue: !Sub "${Environment}-AccountUserCredentialsSelfManagementPolicy-arn"
+        - Fn::ImportValue: "IamUserMfaSelfManagementPolicy-arn"
+        - Fn::ImportValue: "AccountUserCredentialsSelfManagementPolicy-arn"
   DevOpsGroup:
     Type: AWS::IAM::Group
     Properties:
       GroupName: !Sub "${Environment}-DevOps"
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
-        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-        - "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
-        - "arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess"
-        - "arn:aws:iam::aws:policy/AmazonVPCFullAccess"
-        - "arn:aws:iam::aws:policy/AWSCloudFormationFullAccess"
-        - "arn:aws:iam::aws:policy/CloudWatchFullAccess"
-        - "arn:aws:iam::aws:policy/IAMFullAccess"
-        - "arn:aws:iam::aws:policy/IAMReadOnlyAccess"
+        - Fn::ImportValue: !Sub "${Environment}-DevOpsBasePolicy-arn"
         - Fn::ImportValue: !Sub "${Environment}-IamPassRoleEc2Policy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-SsmRestrictedPolicy-arn"
 
 Outputs:
   AdministratorsGroupArn:
@@ -47,7 +40,7 @@ Outputs:
     Description: "ARN of the UsersGroup"
     Value: !GetAtt UsersGroup.Arn
     Export:
-      Name: !Sub "${Environment}-UsersGroup-arn"
+      Name: "UsersGroup-arn"
   DevOpsGroupArn:
     Description: "ARN of the DevOpsGroup"
     Value: !GetAtt DevOpsGroup.Arn
