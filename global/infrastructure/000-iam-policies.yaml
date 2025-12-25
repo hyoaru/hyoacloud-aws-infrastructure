@@ -76,8 +76,6 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
-              Bool:
-                "aws:MultiFactorAuthPresent": "true"
           - Sid: "SSMGeneralActions"
             Effect: Allow
             Action:
@@ -95,19 +93,56 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "InfrastructureManagement"
+          - Sid: "Management"
             Effect: Allow
             Action:
-              - "ec2:*"
-              - "s3:*"
-              - "vpc:*"
-              - "cloudwatch:*"
-              - "cloudformation:*"
-              - "ssm:*"
+              # EC2 & VPC Management
+              - "ec2:RunInstances"
+              - "ec2:TerminateInstances"
+              - "ec2:StopInstances"
+              - "ec2:StartInstances"
+              - "ec2:Associate*"
+              - "ec2:Disassociate*"
+              - "ec2:Create*"
+              - "ec2:Delete*"
+              - "ec2:Modify*"
+              # S3 Management
+              - "s3:PutObject"
+              - "s3:DeleteObject"
+              - "s3:CreateBucket"
+              # CloudFormation Management
+              - "cloudformation:CreateStack"
+              - "cloudformation:UpdateStack"
+              - "cloudformation:DeleteStack"
+              - "cloudformation:ExecuteChangeSet"
+              # SSM Management
+              - "ssm:StartSession"
+              - "ssm:PutParameter"
+              - "ssm:DeleteParameter"
             Resource: "*"
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+              Bool:
+                "aws:MultiFactorAuthPresent": "true"
+          - Sid: "Discovery"
+            Effect: Allow
+            Action:
+              - "ec2:Describe*"
+              - "s3:ListAllMyBuckets"
+              - "s3:GetBucket*"
+              - "s3:ListBucket"
+              - "cloudformation:DescribeStacks"
+              - "cloudformation:ListStacks"
+              - "cloudformation:GetTemplate*"
+              - "cloudformation:DescribeStackEvents"
+              - "cloudwatch:Describe*"
+              - "cloudwatch:Get*"
+              - "cloudwatch:List*"
+              - "ssm:Describe*"
+              - "ssm:Get*"
+              - "ssm:List*"
+            Resource: "*"
 
 Outputs:
   IamUserMfaSelfManagementPolicyArn:
