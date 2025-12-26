@@ -96,6 +96,7 @@ Resources:
               - "iam:Get*"
               - "iam:List*"
             Resource: "*"
+          # IAM Policy
           - Sid: "IamPolicyManagementScoped"
             Effect: "Allow"
             Action:
@@ -103,6 +104,22 @@ Resources:
               - "iam:DeletePolicy*"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+          # IAM Role
+          - Sid: "IamRoleManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:CreateRole"
+              - "iam:DeleteRole"
+              - "iam:TagRole"
+              - "iam:CreateInstanceProfile"
+              - "iam:DeleteInstanceProfile"
+              - "iam:AttachRolePolicy"
+              - "iam:DetachRolePolicy"
+              - "iam:AddRoleToInstanceProfile"
+              - "iam:RemoveRoleFromInstanceProfile"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/${Environment}-*"
           # EC2 & Network
           - Sid: "NetworkEc2Discovery"
             Effect: "Allow"
