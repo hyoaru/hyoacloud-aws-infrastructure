@@ -1,5 +1,12 @@
-deploy-global:
-	./scripts/deploy-global.sh $(env) $(layer)
+deploy-core:
+	./scripts/deploy-core.sh $(layer)
 
-destroy-global:
-	./scripts/destroy-global.sh $(env) $(layer)
+destroy-core:
+	./scripts/destroy-core.sh $(layer)
+
+deploy-space:
+	./scripts/deploy-space.sh $(env) $(layer)
+
+destroy-space:
+	./scripts/destroy-space.sh $(env) $(layer)
+

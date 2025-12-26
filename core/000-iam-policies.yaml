@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 000: Managed Policies"
+
+Resources:
+  AccountUserCredentialsSelfManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-AccountUserCredentialsSelfManagement"
+      Description: "Allows users to read Account Management service metadata."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowAccountInfoReadSpecific"
+            Effect: Allow
+            Action:
+              - "account:GetAccountInformation"
+            Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
+  IamUserMfaSelfManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-IAMUserMFASelfManagement"
+      Description: "Allows users to manage their own MFA devices."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowIAMReadRequired"
+            Effect: Allow
+            Action:
+              - "iam:ListMFADevices"
+              - "iam:ListVirtualMFADevices"
+            Resource: "*"
+
+          - Sid: "AllowSelfMFADeviceManagement"
+            Effect: Allow
+            Action:
+              - "iam:CreateVirtualMFADevice"
+              - "iam:EnableMFADevice"
+              - "iam:ResyncMFADevice"
+              - "iam:DeactivateMFADevice"
+              - "iam:DeleteVirtualMFADevice"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
+
+Outputs:
+  IamUserMfaSelfManagementPolicyArn:
+    Description: "ARN of the IamUserMfaSelfManagementPolicy"
+    Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
+    Export:
+      Name: "core-IamUserMfaSelfManagementPolicy-arn"
+  IamUserMfaSelfManagementPolicyId:
+    Description: "ID of the IamUserMfaSelfManagementPolicy"
+    Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyId"
+    Export:
+      Name: "core-IamUserMfaSelfManagementPolicy-id"
+  AccountUserCredentialsSelfManagementArn:
+    Description: "ARN of the AccountUserCredentialsSelfManagement"
+    Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyArn"
+    Export:
+      Name: "core-AccountUserCredentialsSelfManagementPolicy-arn"
+  AccountUserCredentialsSelfManagementId:
+    Description: "ID of the AccountUserCredentialsSelfManagement"
+    Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyId"
+    Export:
+      Name: "core-AccountUserCredentialsSelfManagementPolicy-id"

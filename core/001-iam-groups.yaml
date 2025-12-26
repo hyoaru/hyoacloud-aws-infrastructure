@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 001: User Groups"
+
+Resources:
+  UsersGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: "core-Users"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "core-IamUserMfaSelfManagementPolicy-arn"
+        - Fn::ImportValue: "core-AccountUserCredentialsSelfManagementPolicy-arn"
+
+Outputs:
+  UsersGroupArn:
+    Description: "ARN of the UsersGroup"
+    Value: !GetAtt UsersGroup.Arn
+    Export:
+      Name: "core-UsersGroup-arn"
