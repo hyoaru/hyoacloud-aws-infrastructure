@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# Usage: ./scripts/deploy-global.sh [environment] [layer_name]
-# Example: ./scripts/deploy-global.sh dev 000-iam-policies
+# Usage: ./scripts/deploy-space.sh [environment] [layer_name]
+# Example: ./scripts/deploy-space.sh dev 000-iam-policies
 
 ENVIRONMENT=$1
 LAYER=$2
@@ -10,8 +10,8 @@ REGION="ap-southeast-1"
 
 # Input validation
 if [[ -z "${ENVIRONMENT}" || -z "${LAYER}" ]]; then
-  echo "Usage: ./scripts/deploy-global.sh [environment] [layer]"
-  echo "Example: ./scripts/deploy-global.sh dev 000-iam-policies"
+  echo "Usage: ./scripts/deploy-space.sh [environment] [layer]"
+  echo "Example: ./scripts/deploy-space.sh dev 000-iam-policies"
   exit 1
 fi
 
@@ -20,9 +20,9 @@ CURRENT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIRECTORY="$(realpath "$CURRENT_DIRECTORY/..")"
 
 # Define file paths
-TEMPLATE_FILE="${ROOT_DIRECTORY}/global/infrastructure/${LAYER}.yaml"
-PARAMETER_FILE="${ROOT_DIRECTORY}/global/parameters/${ENVIRONMENT}/${LAYER}.json"
-STACK_NAME="global-${ENVIRONMENT}-${LAYER}"
+TEMPLATE_FILE="${ROOT_DIRECTORY}/spaces/infrastructure/${LAYER}.yaml"
+PARAMETER_FILE="${ROOT_DIRECTORY}/spaces/parameters/${ENVIRONMENT}/${LAYER}.json"
+STACK_NAME="space-${ENVIRONMENT}-${LAYER}"
 
 if [[ ! -f "${TEMPLATE_FILE}" ]]; then
   echo "Template not found: $TEMPLATE_FILE"
@@ -39,7 +39,7 @@ else
   PARAMETER_OVERRIDES=""
 fi
 
-echo -e "\nDEPLOYING GLOBAL RESOURCE"
+echo -e "\nDEPLOYING SPACE RESOURCE"
 echo "Stack: ${STACK_NAME}"
 echo "Region: ${REGION}"
 echo "Template: ${TEMPLATE_FILE}"

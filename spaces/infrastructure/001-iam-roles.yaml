@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 001: Roles"
+Description: "Space Layer 001: Roles"
 
 Parameters:
   Environment:
@@ -35,7 +35,8 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Properties:
       InstanceProfileName: !Sub "${Environment}-EC2SSMHostManagementProfile"
-      Roles: !Ref Ec2SsmHostManagementRole
+      Roles:
+        - !Ref Ec2SsmHostManagementRole
 
 Outputs:
   Ec2SsmHostManagementRoleArn:

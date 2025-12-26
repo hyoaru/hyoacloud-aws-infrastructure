@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 003: Base Network Resources"
+Description: "Space Layer 003: Base Network Resources"
 
 Parameters:
   Environment:

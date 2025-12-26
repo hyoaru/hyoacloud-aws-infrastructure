@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 000: Managed Policies"
+Description: "Space Layer 000: Managed Policies"
+Transform: AWS::LanguageExtensions
 
 Parameters:
   Environment:
@@ -7,46 +8,10 @@ Parameters:
     Description: "The environment name to prefix resource names."
     AllowedValues: [dev, stage, prod]
 
-Resources:
-  AccountUserCredentialsSelfManagementPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: "AccountUserCredentialsSelfManagement"
-      Description: "Allows users to read Account Management service metadata."
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "AllowAccountInfoReadSpecific"
-            Effect: Allow
-            Action:
-              - "account:GetAccountInformation"
-            Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
-  IamUserMfaSelfManagementPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: "IAMUserMFASelfManagement"
-      Description: "Allows users to manage their own MFA devices."
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "AllowIAMReadRequired"
-            Effect: Allow
-            Action:
-              - "iam:ListMFADevices"
-              - "iam:ListVirtualMFADevices"
-            Resource: "*"
+Conditions:
+  IsProd: !Equals [!Ref Environment, "prod"]
 
-          - Sid: "AllowSelfMFADeviceManagement"
-            Effect: Allow
-            Action:
-              - "iam:CreateVirtualMFADevice"
-              - "iam:EnableMFADevice"
-              - "iam:ResyncMFADevice"
-              - "iam:DeactivateMFADevice"
-              - "iam:DeleteVirtualMFADevice"
-            Resource:
-              - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
-              - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
+Resources:
   IamPassRoleEc2Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -93,10 +58,10 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "Management"
+          - Sid: "ScopedManagementByTag"
             Effect: Allow
             Action:
-              # EC2 & VPC Management
+              # EC2 & VPC
               - "ec2:RunInstances"
               - "ec2:TerminateInstances"
               - "ec2:StopInstances"
@@ -106,16 +71,11 @@ Resources:
               - "ec2:Create*"
               - "ec2:Delete*"
               - "ec2:Modify*"
-              # S3 Management
+              # S3
               - "s3:PutObject"
               - "s3:DeleteObject"
               - "s3:CreateBucket"
-              # CloudFormation Management
-              - "cloudformation:CreateStack"
-              - "cloudformation:UpdateStack"
-              - "cloudformation:DeleteStack"
-              - "cloudformation:ExecuteChangeSet"
-              # SSM Management
+              # SSM
               - "ssm:StartSession"
               - "ssm:PutParameter"
               - "ssm:DeleteParameter"
@@ -125,13 +85,40 @@ Resources:
                 "aws:ResourceTag/Environment": !Ref Environment
               Bool:
                 "aws:MultiFactorAuthPresent": "true"
+          - Sid: "ScopedManagementByPattern"
+            Effect: Allow
+            Action:
+              # CloudFormation
+              - "cloudformation:Create*"
+              - "cloudformation:Update*"
+              - "cloudformation:Delete*"
+              - "cloudformation:Execute*"
+              # IAM
+              - "iam:CreatePolicy"
+            Resource:
+              - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*-${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+              - !If
+                - IsProd
+                - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*-core-*"
+                - !Ref "AWS::NoValue"
+              - !If
+                - IsProd
+                - !Sub "arn:aws:iam::${AWS::AccountId}:policy/core-*"
+                - !Ref "AWS::NoValue"
+            Condition:
+              Bool:
+                "aws:MultiFactorAuthPresent": "true"
           - Sid: "Discovery"
             Effect: Allow
             Action:
+              # EC2 & VPC
               - "ec2:Describe*"
+              # S3
               - "s3:ListAllMyBuckets"
               - "s3:GetBucket*"
               - "s3:ListBucket"
+              # CloudFormation
               - "cloudformation:DescribeStacks"
               - "cloudformation:ListStacks"
               - "cloudformation:GetTemplate*"
@@ -139,32 +126,21 @@ Resources:
               - "cloudwatch:Describe*"
               - "cloudwatch:Get*"
               - "cloudwatch:List*"
+              # SSM
               - "ssm:Describe*"
               - "ssm:Get*"
               - "ssm:List*"
+              # IAM
+              - "iam:Get*"
+              - "iam:List*"
+              # Access analyzer
+              - "access-analyzer:List*"
+              - "access-analyzer:Get*"
+              - "access-analyzer:Check*"
+              - "access-analyzer:ValidatePolicy"
             Resource: "*"
 
 Outputs:
-  IamUserMfaSelfManagementPolicyArn:
-    Description: "ARN of the IamUserMfaSelfManagementPolicy"
-    Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
-    Export:
-      Name: "IamUserMfaSelfManagementPolicy-arn"
-  IamUserMfaSelfManagementPolicyId:
-    Description: "ID of the IamUserMfaSelfManagementPolicy"
-    Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyId"
-    Export:
-      Name: "IamUserMfaSelfManagementPolicy-id"
-  AccountUserCredentialsSelfManagementArn:
-    Description: "ARN of the AccountUserCredentialsSelfManagement"
-    Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyArn"
-    Export:
-      Name: "AccountUserCredentialsSelfManagementPolicy-arn"
-  AccountUserCredentialsSelfManagementId:
-    Description: "ID of the AccountUserCredentialsSelfManagement"
-    Value: !GetAtt "AccountUserCredentialsSelfManagementPolicy.PolicyId"
-    Export:
-      Name: "AccountUserCredentialsSelfManagementPolicy-id"
   IamPassRoleEc2PolicyArn:
     Description: "ARN of the IamPassRoleEc2Policy"
     Value: !GetAtt "IamPassRoleEc2Policy.PolicyArn"

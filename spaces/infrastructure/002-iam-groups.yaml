@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 002: User Groups"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  DevOpsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-DevOps"
+      ManagedPolicyArns:
+        - Fn::ImportValue: !Sub "${Environment}-DevOpsBasePolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-IamPassRoleEc2Policy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-SsmRestrictedPolicy-arn"
+
+Outputs:
+  DevOpsGroupArn:
+    Description: "ARN of the DevOpsGroup"
+    Value: !GetAtt DevOpsGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-DevOpsGroup-arn"

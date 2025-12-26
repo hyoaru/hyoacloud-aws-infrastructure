@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Global Layer 004: Network Connectivity Resources"
+Description: "Space Layer 004: Network Connectivity Resources"
 
 Parameters:
   Environment:
