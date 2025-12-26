@@ -104,6 +104,21 @@ Resources:
               - "iam:DeletePolicy*"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+          # IAM Groups
+          - Sid: "IamGroupManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:CreateGroup"
+              - "iam:DeleteGroup"
+              - "iam:UpdateGroup"
+              - "iam:AttachGroupPolicy"
+              - "iam:DetachGroupPolicy"
+              - "iam:PutGroupPolicy"
+              - "iam:DeleteGroupPolicy"
+              - "iam:AddUserToGroup"
+              - "iam:RemoveUserFromGroup"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
           # IAM Role
           - Sid: "IamRoleManagementScoped"
             Effect: "Allow"
@@ -134,7 +149,7 @@ Resources:
               - "ec2:CreateTags"
               - "ec2:DeleteTags"
             Resource: "*"
-          # VPC
+          # Network VPC
           - Sid: "VpcManagementBase"
             Effect: "Allow"
             Action:
@@ -149,7 +164,7 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
-          # Subnet
+          # Network Subnet
           - Sid: "SubnetManagementBase"
             Effect: "Allow"
             Action:
@@ -164,7 +179,7 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
-          # Route Table
+          # Network Route Table
           - Sid: "RouteTableManagementBase"
             Effect: "Allow"
             Action:
@@ -178,7 +193,7 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
-          # Subnet Route Table Association
+          # Network Subnet Route Table Association
           - Sid: "SubnetRouteTableAssociationManagementScoped"
             Effect: "Allow"
             Action:
