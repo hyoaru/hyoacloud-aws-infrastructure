@@ -89,6 +89,20 @@ Resources:
                   !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/core-*/*",
                   !Ref "AWS::NoValue",
                 ]
+          # IAM
+          - Sid: "IamDisovery"
+            Effect: "Allow"
+            Action:
+              - "iam:Get*"
+              - "iam:List*"
+            Resource: "*"
+          - Sid: "IamPolicyManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:CreatePolicy*"
+              - "iam:DeletePolicy*"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
           # EC2 & Network
           - Sid: "NetworkEc2Discovery"
             Effect: "Allow"
@@ -96,6 +110,12 @@ Resources:
               - "ec2:Get*"
               - "ec2:List*"
               - "ec2:Describe*"
+            Resource: "*"
+          - Sid: "NetworkEc2ManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateTags"
+              - "ec2:DeleteTags"
             Resource: "*"
           # VPC
           - Sid: "VpcManagementBase"
@@ -108,6 +128,35 @@ Resources:
             Effect: "Allow"
             Action:
               - "ec2:DeleteVpc"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Subnet
+          - Sid: "SubnetManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateSubnet"
+              - "ec2:ModifySubnetAttribute"
+            Resource: "*"
+          - Sid: "SubnetManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteSubnet"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Route Table
+          - Sid: "RouteTableManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateRouteTable"
+            Resource: "*"
+          - Sid: "RouteTableManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteRouteTable"
             Resource: "*"
             Condition:
               StringEquals:
