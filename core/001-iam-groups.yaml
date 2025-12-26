@@ -2,6 +2,12 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "Core Layer 001: User Groups"
 
 Resources:
+  AdministratorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: "core-Administrators"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
   UsersGroup:
     Type: AWS::IAM::Group
     Properties:
@@ -16,3 +22,8 @@ Outputs:
     Value: !GetAtt UsersGroup.Arn
     Export:
       Name: "core-UsersGroup-arn"
+  AdministratorsGroupArn:
+    Description: "ARN of the AdministratorsGroup"
+    Value: !GetAtt AdministratorsGroup.Arn
+    Export:
+      Name: "core-AdministratorsGroup-arn"
