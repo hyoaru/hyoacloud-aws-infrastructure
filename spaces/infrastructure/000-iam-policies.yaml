@@ -11,10 +11,10 @@ Conditions:
   IsProd: !Equals [!Ref Environment, "prod"]
 
 Resources:
-  IamPassRoleEc2Policy:
+  IamPassRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Sub "${Environment}-IAMPassRoleEC2"
+      ManagedPolicyName: !Sub "${Environment}-IAMPassRole"
       Description: "Allows users to assign specific IAM roles to EC2 instances to enable service-to-service permissions."
       PolicyDocument:
         Version: "2012-10-17"
@@ -22,7 +22,7 @@ Resources:
           - Sid: "AllowEC2RoleDelegation"
             Effect: Allow
             Action: "iam:PassRole"
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-EC2*"
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
   SsmEnvironmentRestrictedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -57,109 +57,73 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "Discovery"
+          # CloudFormation
+          - Sid: "CloudFormationDiscovery"
             Effect: Allow
             Action:
-              # EC2 & VPC
-              - "ec2:Describe*"
-              # S3
-              - "s3:ListAllMyBuckets"
-              - "s3:GetBucket*"
-              - "s3:ListBucket"
-              # CloudFormation
               - "cloudformation:Describe*"
               - "cloudformation:List*"
               - "cloudformation:Get*"
-              # Cloudwatch
-              - "cloudwatch:Describe*"
-              - "cloudwatch:Get*"
-              - "cloudwatch:List*"
-              # SSM
-              - "ssm:Describe*"
-              - "ssm:Get*"
-              - "ssm:List*"
-              # IAM
-              - "iam:Get*"
-              - "iam:List*"
-              # Access analyzer
-              - "access-analyzer:List*"
-              - "access-analyzer:Get*"
-              - "access-analyzer:Check*"
-              - "access-analyzer:ValidatePolicy"
+              - "cloudformation:Validate*"
             Resource: "*"
-          - Sid: "ServiceInitialiation"
+          - Sid: "CloudFormationManagementBase"
             Effect: Allow
             Action:
               - "cloudformation:CreateChangeSet"
               - "cloudformation:ValidateTemplate"
               - "cloudformation:GetTemplateSummary"
             Resource: "*"
-          - Sid: "ScopedManagementByTag"
+          - Sid: "CloudFormationManagementScoped"
             Effect: Allow
             Action:
-              # EC2 & VPC
-              - "ec2:RunInstances"
-              - "ec2:TerminateInstances"
-              - "ec2:StopInstances"
-              - "ec2:StartInstances"
-              - "ec2:Associate*"
-              - "ec2:Disassociate*"
-              - "ec2:Detach*"
-              - "ec2:Create*"
-              - "ec2:Delete*"
-              - "ec2:Modify*"
-              # S3
-              - "s3:PutObject"
-              - "s3:DeleteObject"
-              - "s3:CreateBucket"
-              # SSM
-              - "ssm:StartSession"
-              - "ssm:PutParameter"
-              - "ssm:DeleteParameter"
-            Resource: "*"
-            Condition:
-              StringEquals:
-                "aws:ResourceTag/Environment": !Ref Environment
-          - Sid: "ScopedManagementByPattern"
-            Effect: Allow
-            Action:
-              # CloudFormation
               - "cloudformation:CreateStack"
               - "cloudformation:UpdateStack"
               - "cloudformation:DeleteStack"
+              - "cloudformation:CreateChangeSet"
               - "cloudformation:ExecuteChangeSet"
-              - "cloudformation:DescribeChangeSet"
-              - "cloudformation:DeleteChangeSet"
-              # IAM
-              - "iam:CreatePolicy"
-              - "iam:DeletePolicy"
-              - "iam:CreatePolicy"
             Resource:
               - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*/*"
               - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*"
-              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
               - !If [
                   IsProd,
                   !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/core-*/*",
                   !Ref "AWS::NoValue",
                 ]
-              - !If [
-                  IsProd,
-                  !Sub "arn:aws:iam::${AWS::AccountId}:policy/core-*",
-                  !Ref "AWS::NoValue",
-                ]
+          # EC2 & Network
+          - Sid: "NetworkEc2Discovery"
+            Effect: "Allow"
+            Action:
+              - "ec2:Get*"
+              - "ec2:List*"
+              - "ec2:Describe*"
+            Resource: "*"
+          # VPC
+          - Sid: "VpcManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateVpc"
+              - "ec2:ModifyVpcAttribute"
+            Resource: "*"
+          - Sid: "VpcManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteVpc"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
-  IamPassRoleEc2PolicyArn:
-    Description: "ARN of the IamPassRoleEc2Policy"
-    Value: !GetAtt "IamPassRoleEc2Policy.PolicyArn"
+  IamPassRolePolicyArn:
+    Description: "ARN of the IamPassRolePolicy"
+    Value: !GetAtt "IamPassRolePolicy.PolicyArn"
     Export:
-      Name: !Sub "${Environment}-IamPassRoleEc2Policy-arn"
-  IamPassRoleEc2PolicyId:
-    Description: "ID of the IamPassRoleEc2Policy"
-    Value: !GetAtt "IamPassRoleEc2Policy.PolicyId"
+      Name: !Sub "${Environment}-IamPassRolePolicy-arn"
+  IamPassRolePolicyId:
+    Description: "ID of the IamPassRolePolicy"
+    Value: !GetAtt "IamPassRolePolicy.PolicyId"
     Export:
-      Name: !Sub "${Environment}-IamPassRoleEc2Policy-id"
+      Name: !Sub "${Environment}-IamPassRolePolicy-id"
   SsmRestrictedPolicyArn:
     Description: "ARN of the SsmEnvironmentRestrictedPolicy"
     Value: !Ref SsmEnvironmentRestrictedPolicy
