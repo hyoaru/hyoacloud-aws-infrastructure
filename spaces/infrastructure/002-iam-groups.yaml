@@ -14,7 +14,7 @@ Resources:
       GroupName: !Sub "${Environment}-DevOps"
       ManagedPolicyArns:
         - Fn::ImportValue: !Sub "${Environment}-DevOpsBasePolicy-arn"
-        - Fn::ImportValue: !Sub "${Environment}-IamPassRoleEc2Policy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-IamPassRolePolicy-arn"
         - Fn::ImportValue: !Sub "${Environment}-SsmRestrictedPolicy-arn"
 
 Outputs:
