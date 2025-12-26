@@ -22,10 +22,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "004-network-connectivity"
+        - Key: Platform
+          Value: "space"
   # VPC gateway attachment
   MainInternetGatewayVpcAttachment:
     Type: AWS::EC2::VPCGatewayAttachment

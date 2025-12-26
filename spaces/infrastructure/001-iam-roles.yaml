@@ -27,10 +27,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "001-iam-roles"
+        - Key: Platform
+          Value: "space"
   Ec2SsmHostManagementProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:

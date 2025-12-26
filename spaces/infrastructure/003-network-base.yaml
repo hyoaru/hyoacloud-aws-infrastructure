@@ -25,10 +25,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   # Subnets
   MainPublicSubnet1:
     Type: AWS::EC2::Subnet
@@ -43,10 +41,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   MainPublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -60,10 +56,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   MainPrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -77,10 +71,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   MainPrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -94,10 +86,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   # Route tables
   MainPublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -110,10 +100,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   MainPrivateRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -125,10 +113,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   MainPrivateRouteTable2:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -140,10 +126,8 @@ Resources:
           Value: !Sub "${Environment}"
         - Key: Owner
           Value: "DevOps"
-        - Key: Project
-          Value: "core"
-        - Key: Layer
-          Value: "003-network-base"
+        - Key: Platform
+          Value: "space"
   # Subnet route table associations
   MainPublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
