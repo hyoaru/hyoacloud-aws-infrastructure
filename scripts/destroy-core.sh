@@ -19,7 +19,13 @@ CURRENT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIRECTORY="$(realpath "$CURRENT_DIRECTORY/..")"
 
 # Define the parameters
+TEMPLATE_FILE="${ROOT_DIRECTORY}/core/${LAYER}.yaml"
 STACK_NAME="core-${LAYER}"
+
+if [[ ! -f "${TEMPLATE_FILE}" ]]; then
+  echo "Layer not found: $LAYER"
+  exit 1
+fi
 
 echo -e "\nDESTROYING CORE RESOURCE"
 echo "Stack: ${STACK_NAME}"
