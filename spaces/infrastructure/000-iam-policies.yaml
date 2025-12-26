@@ -161,6 +161,16 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          # Subnet Route Table Association
+          - Sid: "SubnetRouteTableAssociationManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:AssociateRouteTable"
+              - "ec2:DissociateRouteTable"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   IamPassRolePolicyArn:
