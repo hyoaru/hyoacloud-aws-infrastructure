@@ -49,11 +49,11 @@ Resources:
               - "ssm:TerminateSession"
               - "ssm:ResumeSession"
             Resource: "*"
-  DevOpsBasePolicy:
+  DevOpsConsolidatedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Sub "${Environment}-DevOpsBase"
-      Description: !Sub "Consolidated base DevOps permissions for ${Environment}"
+      ManagedPolicyName: !Sub "${Environment}-DevOpsConsolidated"
+      Description: !Sub "Consolidated DevOps permissions for ${Environment}"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -225,13 +225,13 @@ Outputs:
     Value: !Ref SsmEnvironmentRestrictedPolicy
     Export:
       Name: !Sub "${Environment}-SsmRestrictedPolicy-id"
-  DevOpsBasePolicyArn:
-    Description: "ARN of the DevOpsBasePolicy"
-    Value: !Ref DevOpsBasePolicy
+  DevOpsConsolidatedPolicyArn:
+    Description: "ARN of the DevOpsConsolidatedPolicy"
+    Value: !Ref DevOpsConsolidatedPolicy
     Export:
-      Name: !Sub "${Environment}-DevOpsBasePolicy-arn"
-  DevOpsBasePolicyId:
-    Description: "ID of the DevOpsBasePolicy"
-    Value: !Ref DevOpsBasePolicy
+      Name: !Sub "${Environment}-DevOpsConsolidatedPolicy-arn"
+  DevOpsConsolidatedPolicyId:
+    Description: "ID of the DevOpsConsolidatedPolicy"
+    Value: !Ref DevOpsConsolidatedPolicy
     Export:
-      Name: !Sub "${Environment}-DevOpsBasePolicy-id"
+      Name: !Sub "${Environment}-DevOpsConsolidatedPolicy-id"

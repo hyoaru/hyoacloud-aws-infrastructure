@@ -13,7 +13,7 @@ Resources:
     Properties:
       GroupName: !Sub "${Environment}-DevOps"
       ManagedPolicyArns:
-        - Fn::ImportValue: !Sub "${Environment}-DevOpsBasePolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-DevOpsConsolidatedPolicy-arn"
         - Fn::ImportValue: !Sub "${Environment}-IamPassRolePolicy-arn"
         - Fn::ImportValue: !Sub "${Environment}-SsmRestrictedPolicy-arn"
 
