@@ -250,6 +250,23 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          # Launch Template
+          - Sid: "LaunchTemplateManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateLaunchTemplate"
+            Resource: "*"
+          - Sid: "LaunchTemplateManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteLaunchTemplate"
+              - "ec2:ModifyLaunchTemplate"
+              - "ec2:CreateLaunchTemplateVersion"
+              - "ec2:DeleteLaunchTemplateVersion"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   IamPassRolePolicyArn:
