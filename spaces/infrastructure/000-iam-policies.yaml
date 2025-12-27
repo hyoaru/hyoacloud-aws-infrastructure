@@ -230,6 +230,26 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          # Security Group
+          - Sid: "SecurityGroupManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateSecurityGroup"
+            Resource: "*"
+          - Sid: "SecurityGroupManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:AuthorizeSecurityGroup*"
+              - "ec2:RevokeSecurityGroup*"
+              - "ec2:UpdateSecurityGroupRuleDescription*"
+              - "ec2:DeleteSecurityGroup"
+              - "ec2:ModifySecurityGroupRules"
+              - "ec2:AssociateSecurityGroupVpc"
+              - "ec2:DissociateSecurityGroupVpc"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   IamPassRolePolicyArn:
