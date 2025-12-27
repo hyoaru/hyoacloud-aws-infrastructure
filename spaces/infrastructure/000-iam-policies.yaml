@@ -179,6 +179,22 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          # Network Internet Gateway
+          - Sid: "InternetGatewayManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateInternetGateway"
+            Resource: "*"
+          - Sid: "InternetGatewayManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteInternetGateway"
+              - "ec2:AttachInternetGateway"
+              - "ec2:DetachInternetGateway"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
           # Network Route Table
           - Sid: "RouteTableManagementBase"
             Effect: "Allow"
@@ -199,6 +215,17 @@ Resources:
             Action:
               - "ec2:AssociateRouteTable"
               - "ec2:DissociateRouteTable"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Route
+          - Sid: "RouteManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateRoute"
+              - "ec2:DeleteRoute"
+              - "ec2:ReplaceRoute"
             Resource: "*"
             Condition:
               StringEquals:
