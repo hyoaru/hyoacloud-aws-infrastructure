@@ -267,6 +267,54 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          # Auto Scaling Group
+          - Sid: "AutoScalingDiscovery"
+            Effect: "Allow"
+            Action:
+              - "autoscaling:Describe*"
+              - "autoscaling:Get*"
+            Resource: "*"
+          - Sid: "AutoScalingManagementBase"
+            Effect: "Allow"
+            Action:
+              - "autoscaling:LaunchInstances"
+            Resource: "*"
+          - Sid: "AutoScalingManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "autoscaling:*AutoScalingGroup"
+              - "autoscaling:*LoadBalancers"
+              - "autoscaling:*Policy"
+              - "autoscaling:*LoadBalancerTargetGroups"
+              - "autoscaling:*Processes"
+              - "autoscaling:*InstanceRefresh"
+              - "autoscaling:*LaunchConfiguration"
+              - "autoscaling:*Instances"
+              - "autoscaling:*Standby"
+              - "autoscaling:*LifecycleAction"
+              - "autoscaling:*Tags"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # EC2
+          - Sid: "Ec2ManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:RunInstances"
+            Resource: "*"
+          - Sid: "Ec2ManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:AssociateIamInstanceProfile"
+              - "ec2:RebootInstances"
+              - "ec2:StartInstances"
+              - "ec2:StopInstances"
+              - "ec2:TerminateInstances"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   IamPassRolePolicyArn:
