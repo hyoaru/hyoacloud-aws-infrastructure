@@ -2,7 +2,7 @@
 set -e
 
 # Usage: ./scripts/destroy-space.sh [environment] [group] [layer]
-# Example: ./scripts/destroy-space.sh dev 000-iam-policies
+# Example: ./scripts/destroy-space.sh dev 000-iam-policies 000-base
 
 ENVIRONMENT=$1
 GROUP=$2
@@ -12,7 +12,7 @@ REGION="ap-southeast-1"
 # Input validation
 if [[ -z "${ENVIRONMENT}" || -z "${GROUP}" || -z "${LAYER}" ]]; then
   echo "Usage: ./scripts/destroy-space.sh [environment] [group] [layer]"
-  echo "Example: ./scripts/destroy-space.sh dev 000-iam-policies 00-base"
+  echo "Example: ./scripts/destroy-space.sh dev 000-iam-policies 000-base"
   exit 1
 fi
 
