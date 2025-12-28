@@ -315,6 +315,14 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          # Cloudwatch
+          - Sid: "CloudwatchDiscovery"
+            Effect: "Allow"
+            Action:
+              - "cloudwatch:Get*"
+              - "cloudwatch:List*"
+              - "cloudwatch:Describe*"
+            Resource: "*"
 
 Outputs:
   IamPassRolePolicyArn:
