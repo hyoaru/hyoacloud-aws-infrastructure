@@ -195,7 +195,7 @@ Resources:
             Effect: "Allow"
             Action:
               - "ec2:AssociateRouteTable"
-              - "ec2:DissociateRouteTable"
+              - "ec2:DisassociateRouteTable"
             Resource: "*"
             Condition:
               StringEquals:
