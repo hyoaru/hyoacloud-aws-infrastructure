@@ -43,11 +43,9 @@ Resources:
           - Sid: "SSMGeneralActions"
             Effect: Allow
             Action:
-              - "ssm:DescribeSessions"
+              - "ssm:Describe*"
               - "ssm:GetConnectionStatus"
-              - "ssm:DescribeInstanceInformation"
-              - "ssm:TerminateSession"
-              - "ssm:ResumeSession"
+              - "ssm:*Session"
             Resource: "*"
   DevOpsConsolidatedPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -76,10 +74,7 @@ Resources:
           - Sid: "CloudFormationManagementScoped"
             Effect: Allow
             Action:
-              - "cloudformation:CreateStack"
-              - "cloudformation:UpdateStack"
-              - "cloudformation:DeleteStack"
-              - "cloudformation:CreateChangeSet"
+              - "cloudformation:*Stack"
               - "cloudformation:ExecuteChangeSet"
             Resource:
               - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*/*"
@@ -108,30 +103,17 @@ Resources:
           - Sid: "IamGroupManagementScoped"
             Effect: "Allow"
             Action:
-              - "iam:CreateGroup"
-              - "iam:DeleteGroup"
-              - "iam:UpdateGroup"
-              - "iam:AttachGroupPolicy"
-              - "iam:DetachGroupPolicy"
-              - "iam:PutGroupPolicy"
-              - "iam:DeleteGroupPolicy"
-              - "iam:AddUserToGroup"
-              - "iam:RemoveUserFromGroup"
+              - "iam:*Group"
+              - "iam:*GroupPolicy"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
           # IAM Role
           - Sid: "IamRoleManagementScoped"
             Effect: "Allow"
             Action:
-              - "iam:CreateRole"
-              - "iam:DeleteRole"
-              - "iam:TagRole"
-              - "iam:CreateInstanceProfile"
-              - "iam:DeleteInstanceProfile"
-              - "iam:AttachRolePolicy"
-              - "iam:DetachRolePolicy"
-              - "iam:AddRoleToInstanceProfile"
-              - "iam:RemoveRoleFromInstanceProfile"
+              - "iam:*Role"
+              - "iam:*InstanceProfile"
+              - "iam:*RolePolicy"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/${Environment}-*"
@@ -146,8 +128,7 @@ Resources:
           - Sid: "NetworkEc2ManagementBase"
             Effect: "Allow"
             Action:
-              - "ec2:CreateTags"
-              - "ec2:DeleteTags"
+              - "ec2:*Tags"
             Resource: "*"
           # Network VPC
           - Sid: "VpcManagementBase"
@@ -223,9 +204,7 @@ Resources:
           - Sid: "RouteManagementScoped"
             Effect: "Allow"
             Action:
-              - "ec2:CreateRoute"
-              - "ec2:DeleteRoute"
-              - "ec2:ReplaceRoute"
+              - "ec2:*Route"
             Resource: "*"
             Condition:
               StringEquals:
@@ -244,8 +223,7 @@ Resources:
               - "ec2:UpdateSecurityGroupRuleDescription*"
               - "ec2:DeleteSecurityGroup"
               - "ec2:ModifySecurityGroupRules"
-              - "ec2:AssociateSecurityGroupVpc"
-              - "ec2:DissociateSecurityGroupVpc"
+              - "ec2:*SecurityGroupVpc"
             Resource: "*"
             Condition:
               StringEquals:
@@ -261,8 +239,7 @@ Resources:
             Action:
               - "ec2:DeleteLaunchTemplate"
               - "ec2:ModifyLaunchTemplate"
-              - "ec2:CreateLaunchTemplateVersion"
-              - "ec2:DeleteLaunchTemplateVersion"
+              - "ec2:*LaunchTemplateVersion"
             Resource: "*"
             Condition:
               StringEquals:
@@ -340,6 +317,21 @@ Resources:
               - "compute-optimizer:List*"
               - "compute-optimizer:Describe*"
             Resource: "*"
+          # Network ACLs
+          - Sid: "NetworkAclManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateNetworkAcl*"
+              - "ec2:ReplaceNetworkAcl*"
+            Resource: "*"
+          - Sid: "NetworkAclManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteNetworkAcl*"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   IamPassRolePolicyArn:
