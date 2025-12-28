@@ -6,7 +6,7 @@ set -e
 
 ENVIRONMENT=$1
 GROUP=$2
-LAYER=$2
+LAYER=$3
 REGION="ap-southeast-1"
 
 # Input validation
