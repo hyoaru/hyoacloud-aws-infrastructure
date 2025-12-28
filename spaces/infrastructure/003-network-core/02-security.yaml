@@ -6,9 +6,6 @@ Parameters:
     Type: String
     Description: "The environment name to prefix resource names."
     AllowedValues: [dev, stage, prod]
-  Region:
-    Type: String
-    Description: "The region where the resources will reside."
 
 Resources:
   # Network ACLs
@@ -43,6 +40,7 @@ Resources:
   # NACL Rules
   InboundPublicAllNaclEntry:
     Type: AWS::EC2::NetworkAclEntry
+    DependsOn: MainPublicNacl
     Properties:
       NetworkAclId: !Ref MainPublicNacl
       RuleNumber: 100
@@ -52,6 +50,7 @@ Resources:
       CidrBlock: 0.0.0.0/0
   OutboundPublicAllNaclEntry:
     Type: AWS::EC2::NetworkAclEntry
+    DependsOn: MainPublicNacl
     Properties:
       NetworkAclId: !Ref MainPublicNacl
       RuleNumber: 100
@@ -61,6 +60,7 @@ Resources:
       CidrBlock: 0.0.0.0/0
   InboundPrivateVpcAllNaclEntry:
     Type: AWS::EC2::NetworkAclEntry
+    DependsOn: MainPrivateNacl
     Properties:
       NetworkAclId: !Ref MainPrivateNacl
       RuleNumber: 100
@@ -70,6 +70,7 @@ Resources:
       CidrBlock: 10.0.0.0/16
   InboundPrivateEphemeralNaclEntry:
     Type: AWS::EC2::NetworkAclEntry
+    DependsOn: MainPrivateNacl
     Properties:
       NetworkAclId: !Ref MainPrivateNacl
       RuleNumber: 110
@@ -80,6 +81,7 @@ Resources:
       PortRange: { From: 1024, To: 65535 }
   OutboundPrivateAllNaclEntry:
     Type: AWS::EC2::NetworkAclEntry
+    DependsOn: MainPrivateNacl
     Properties:
       NetworkAclId: !Ref MainPrivateNacl
       RuleNumber: 100
@@ -90,24 +92,42 @@ Resources:
   # Subnet NACL Associations
   PublicSubnet1NaclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
+    DependsOn:
+      - MainPublicNacl
+      - InboundPublicAllNaclEntry
+      - OutboundPublicAllNaclEntry
     Properties:
       SubnetId: !ImportValue
         Fn::Sub: "${Environment}-MainPublicSubnet1-id"
       NetworkAclId: !Ref MainPublicNacl
   PublicSubnet2NaclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
+    DependsOn:
+      - MainPublicNacl
+      - InboundPublicAllNaclEntry
+      - OutboundPublicAllNaclEntry
     Properties:
       SubnetId: !ImportValue
         Fn::Sub: "${Environment}-MainPublicSubnet2-id"
       NetworkAclId: !Ref MainPublicNacl
   PrivateSubnet1NaclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
+    DependsOn:
+      - MainPrivateNacl
+      - InboundPrivateVpcAllNaclEntry
+      - InboundPrivateEphemeralNaclEntry
+      - OutboundPrivateAllNaclEntry
     Properties:
       SubnetId: !ImportValue
         Fn::Sub: "${Environment}-MainPrivateSubnet1-id"
       NetworkAclId: !Ref MainPrivateNacl
   PrivateSubnet2NaclAssociation:
     Type: AWS::EC2::SubnetNetworkAclAssociation
+    DependsOn:
+      - MainPrivateNacl
+      - InboundPrivateVpcAllNaclEntry
+      - InboundPrivateEphemeralNaclEntry
+      - OutboundPrivateAllNaclEntry
     Properties:
       SubnetId: !ImportValue
         Fn::Sub: "${Environment}-MainPrivateSubnet2-id"
@@ -125,32 +145,6 @@ Outputs:
     Value: !GetAtt MainPrivateNacl.Id
     Export:
       Name: !Sub "${Environment}-MainPrivateNacl-id"
-  # NACL Rules
-  InboundPublicAllNaclEntryId:
-    Description: "ID of the InboundPublicAllNaclEntry"
-    Value: !GetAtt InboundPublicAllNaclEntry.Id
-    Export:
-      Name: !Sub "${Environment}-InboundPublicAllNaclEntry-id"
-  OutboundPublicAllNaclEntryId:
-    Description: "ID of the OutboundPublicAllNaclEntry"
-    Value: !GetAtt OutboundPublicAllNaclEntry.Id
-    Export:
-      Name: !Sub "${Environment}-OutboundPublicAllNaclEntry-id"
-  InboundPrivateVpcAllNaclEntryId:
-    Description: "ID of the InboundPrivateVpcAllNaclEntry"
-    Value: !GetAtt InboundPrivateVpcAllNaclEntry.Id
-    Export:
-      Name: !Sub "${Environment}-InboundPrivateVpcAllNaclEntry-id"
-  InboundPrivateEphemeralNaclEntryId:
-    Description: "ID of the InboundPrivateEphemeralNaclEntry"
-    Value: !GetAtt InboundPrivateEphemeralNaclEntry.Id
-    Export:
-      Name: !Sub "${Environment}-InboundPrivateEphemeralNaclEntry-id"
-  OutboundPrivateAllNaclEntryId:
-    Description: "ID of the OutboundPrivateAllNaclEntry"
-    Value: !GetAtt OutboundPrivateAllNaclEntry.Id
-    Export:
-      Name: !Sub "${Environment}-OutboundPrivateAllNaclEntry-id"
   # Subnet NACL Associations
   PublicSubnet1NaclAssociationId:
     Description: "ID of the PublicSubnet1NaclAssociation"
