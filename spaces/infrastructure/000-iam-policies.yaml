@@ -323,7 +323,7 @@ Resources:
               - "cloudwatch:List*"
               - "cloudwatch:Describe*"
             Resource: "*"
-          # AccessAnalyzer
+          # Access Analyzer
           - Sid: "AccessAnalyzerDiscovery"
             Effect: "Allow"
             Action:
@@ -331,6 +331,14 @@ Resources:
               - "access-analyzer:List*"
               - "access-analyzer:Check*"
               - "access-analyzer:Validate*"
+            Resource: "*"
+          # Compute Optimizer
+          - Sid: "ComputeOptimizerDiscovery"
+            Effect: "Allow"
+            Action:
+              - "compute-optimizer:Get*"
+              - "compute-optimizer:List*"
+              - "compute-optimizer:Describe*"
             Resource: "*"
 
 Outputs:
