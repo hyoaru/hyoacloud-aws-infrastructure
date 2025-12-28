@@ -323,6 +323,15 @@ Resources:
               - "cloudwatch:List*"
               - "cloudwatch:Describe*"
             Resource: "*"
+          # AccessAnalyzer
+          - Sid: "AccessAnalyzerDiscovery"
+            Effect: "Allow"
+            Action:
+              - "access-analyzer:Get*"
+              - "access-analyzer:List*"
+              - "access-analyzer:Check*"
+              - "access-analyzer:Validate*"
+            Resource: "*"
 
 Outputs:
   IamPassRolePolicyArn:
