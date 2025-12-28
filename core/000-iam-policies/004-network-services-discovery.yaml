@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 000: Network Services Discovery Policy"
+
+Resources:
+  NetworkServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-NetworkServicesDiscovery"
+      Description: "Allows read-only access to VPC, Subnets, Route Table, Internet Gateway, Network ACLs, VPN, Security Groups, Target Groups, Route53, CloudFront, API Gateway"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "ec2:DescribeVpc*"
+              - "ec2:DescribeSubnet*"
+              - "ec2:DescribeRouteTable*"
+              - "ec2:DescribeInternetGateway*"
+              - "ec2:DescribeNetworkAcl*"
+              - "ec2:DescribeVpn*"
+              - "ec2:DescribeSecurityGroup*"
+              - "ec2:DescribeStaleSecurityGroup*"
+              - "ec2:DescribeNetworkAcl*"
+              - "elasticloadbalancing:DescribeSSLPolicies"
+              - "elasticloadbalancing:DescribeTarget*"
+              - "elasticloadbalancing:GetTrustStore*"
+              - "elasticloadbalancing:DescribeTrustStore*"
+            Resource: "*"
+
+Outputs:
+  NetworkServicesDiscoveryPolicyArn:
+    Description: "ARN of the NetworkServicesDiscoveryPolicy"
+    Value: !GetAtt "NetworkServicesDiscoveryPolicy.PolicyArn"
+    Export:
+      Name: "core-NetworkServicesDiscoveryPolicy-arn"
+  NetworkServicesDiscoveryPolicyId:
+    Description: "ID of the NetworkServicesDiscoveryPolicy"
+    Value: !GetAtt "NetworkServicesDiscoveryPolicy.PolicyId"
+    Export:
+      Name: "core-NetworkServicesDiscoveryPolicy-id"

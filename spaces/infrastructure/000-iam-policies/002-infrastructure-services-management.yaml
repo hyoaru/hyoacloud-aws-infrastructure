@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 000: Infrastructure Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  InfrastructureServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-InfrastructureServicesManagement"
+      Description: !Sub "Allows ${Environment} management access to CloudFormation, CodeBuild, CloudWatch"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # CloudFormation
+          - Sid: "CloudFormationManagementBase"
+            Effect: Allow
+            Action:
+              - "cloudformation:CreateChangeSet"
+              - "cloudformation:ValidateTemplate"
+              - "cloudformation:GetTemplateSummary"
+            Resource: "*"
+          - Sid: "CloudFormationManagementScoped"
+            Effect: Allow
+            Action:
+              - "cloudformation:*Stack"
+              - "cloudformation:ExecuteChangeSet"
+            Resource:
+              - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*/*"
+              - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*"
+
+Outputs:
+  InfrastructureServicesManagementPolicyArn:
+    Description: "ARN of the InfrastructureServicesManagementPolicy"
+    Value: !Ref InfrastructureServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-InfrastructureServicesManagementPolicy-arn"
+  InfrastructureServicesManagementPolicyId:
+    Description: "ID of the InfrastructureServicesManagementPolicy"
+    Value: !Ref InfrastructureServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-InfrastructureServicesManagementPolicy-id"

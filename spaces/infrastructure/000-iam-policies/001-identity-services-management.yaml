@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 000: Identity Services Management Policies"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  IdentityServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-IdentityServicesManagement"
+      Description: !Sub "Allows ${Environment} management access to IAM, Organizations, SSO/Identity Center"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # IAM Policy
+          - Sid: "IamPolicyManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:CreatePolicy*"
+              - "iam:DeletePolicy*"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+          # IAM Groups
+          - Sid: "IamGroupManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:*Group"
+              - "iam:*GroupPolicy"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
+          # IAM Role
+          - Sid: "IamRoleManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:*Role"
+              - "iam:*InstanceProfile"
+              - "iam:*RolePolicy"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/${Environment}-*"
+
+Outputs:
+  IdentityServicesManagementPolicyArn:
+    Description: "ARN of the IdentityServicesManagementPolicy"
+    Value: !Ref IdentityServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-IdentityServicesManagementPolicy-arn"
+  IdentityServicesManagementPolicyId:
+    Description: "ID of the IdentityServicesManagementPolicy"
+    Value: !Ref IdentityServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-IdentityServicesManagementPolicy-id"

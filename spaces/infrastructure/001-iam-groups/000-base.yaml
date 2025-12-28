@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 001: User Groups"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  IdentityServicesOperatorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-IdentityServicesOperators"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "core-IdentityServicesDiscoveryPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-IdentityServicesManagementPolicy-arn"
+  MonitoringServicesOperatorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-MonitoringServicesOperators"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "core-MonitoringServicesDiscoveryPolicy-arn"
+  InfrastructureServicesOperatorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-InfrastructureServicesOperators"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "core-InfrastructureServicesDiscoveryPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-InfrastructureServicesManagementPolicy-arn"
+  NetworkServicesOperatorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-NetworkServicesOperators"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "core-NetworkServicesDiscoveryPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-NetworkServicesManagementPolicy-arn"
+  ComputeServicesOperatorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-ComputeServicesOperators"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "core-ComputeServicesDiscoveryPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-ComputeServicesManagementPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-IamPassRolePolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-SsmRestrictedPolicy-arn"
+
+Outputs:
+  IdentityServicesOperatorsGroupArn:
+    Description: "ARN of the IdentityServicesOperatorsGroup"
+    Value: !GetAtt IdentityServicesOperatorsGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-IdentityServicesOperatorsGroup-arn"
+  MonitoringServicesOperatorsGroupArn:
+    Description: "ARN of the MonitoringServicesOperatorsGroup"
+    Value: !GetAtt MonitoringServicesOperatorsGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-MonitoringServicesOperatorsGroup-arn"
+  InfrastructureServicesOperatorsGroupArn:
+    Description: "ARN of the InfrastructureServicesOperatorsGroup"
+    Value: !GetAtt InfrastructureServicesOperatorsGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-InfrastructureServicesOperatorsGroup-arn"
+  NetworkServicesOperatorsGroupArn:
+    Description: "ARN of the NetworkServicesOperatorsGroup"
+    Value: !GetAtt NetworkServicesOperatorsGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-NetworkServicesOperatorsGroup-arn"
+  ComputeServicesOperatorsGroupArn:
+    Description: "ARN of the ComputeServicesOperatorsGroup"
+    Value: !GetAtt ComputeServicesOperatorsGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-ComputeServicesOperatorsGroup-arn"

@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 000: Identity Services Discovery Policy"
+
+Resources:
+  IdentityServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-IdentityServicesDiscovery"
+      Description: "Allows read-only access to IAM, Organizations, SSO/Identity Center"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "iam:Get*"
+              - "iam:List*"
+            Resource: "*"
+
+Outputs:
+  IdentityServicesDiscoveryPolicyArn:
+    Description: "ARN of the IdentityServicesDiscoveryPolicy"
+    Value: !GetAtt "IdentityServicesDiscoveryPolicy.PolicyArn"
+    Export:
+      Name: "core-IdentityServicesDiscoveryPolicy-arn"
+  IdentityServicesDiscoveryPolicyId:
+    Description: "ID of the IdentityServicesDiscoveryPolicy"
+    Value: !GetAtt "IdentityServicesDiscoveryPolicy.PolicyId"
+    Export:
+      Name: "core-IdentityServicesDiscoveryPolicy-id"

@@ -1,0 +1,167 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 000: Network Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  NetworkServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-NetworkServicesManagement"
+      Description: !Sub "Allows ${Environment} management access to VPC, Subnets, Route Table, Internet Gateway, Network ACLs, VPN, Security Groups, Target Groups, Route53, CloudFront, API Gateway"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "NetworkManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:*Tags"
+            Resource: "*"
+          # Network VPC
+          - Sid: "VpcManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateVpc"
+              - "ec2:ModifyVpcAttribute"
+            Resource: "*"
+          - Sid: "VpcManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteVpc"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Network Subnet
+          - Sid: "SubnetManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateSubnet"
+              - "ec2:ModifySubnetAttribute"
+            Resource: "*"
+          - Sid: "SubnetManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteSubnet"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Network Internet Gateway
+          - Sid: "InternetGatewayManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateInternetGateway"
+            Resource: "*"
+          - Sid: "InternetGatewayManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteInternetGateway"
+              - "ec2:AttachInternetGateway"
+              - "ec2:DetachInternetGateway"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Network Route Table
+          - Sid: "RouteTableManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateRouteTable"
+            Resource: "*"
+          - Sid: "RouteTableManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteRouteTable"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Network Subnet Route Table Association
+          - Sid: "SubnetRouteTableAssociationManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:AssociateRouteTable"
+              - "ec2:DisassociateRouteTable"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Route
+          - Sid: "RouteManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:*Route"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Security Group
+          - Sid: "SecurityGroupManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateSecurityGroup"
+            Resource: "*"
+          - Sid: "SecurityGroupManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:AuthorizeSecurityGroup*"
+              - "ec2:RevokeSecurityGroup*"
+              - "ec2:UpdateSecurityGroupRuleDescription*"
+              - "ec2:DeleteSecurityGroup"
+              - "ec2:ModifySecurityGroupRules"
+              - "ec2:*SecurityGroupVpc"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Network ACLs
+          - Sid: "NetworkAclManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateNetworkAcl*"
+              - "ec2:ReplaceNetworkAcl*"
+            Resource: "*"
+          - Sid: "NetworkAclManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteNetworkAcl*"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Target Groups
+          - Sid: "TargetGroupsManagementBase"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:AddTags"
+            Resource: "*"
+          - Sid: "TargetGroupsManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:CreateTargetGroup"
+              - "elasticloadbalancing:DeleteTargetGroup"
+              - "elasticloadbalancing:DeregisterTargets"
+              - "elasticloadbalancing:ModifyTargetGroup"
+              - "elasticloadbalancing:RegisterTargets"
+              - "elasticloadbalancing:ModifyTargetGroupAttributes"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+
+Outputs:
+  NetworkServicesManagementPolicyArn:
+    Description: "ARN of the NetworkServicesManagementPolicy"
+    Value: !Ref NetworkServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-NetworkServicesManagementPolicy-arn"
+  NetworkServicesManagementPolicyId:
+    Description: "ID of the NetworkServicesManagementPolicy"
+    Value: !Ref NetworkServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-NetworkServicesManagementPolicy-id"

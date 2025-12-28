@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 000: Compute Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  ComputeServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-ComputeServicesManagement"
+      Description: !Sub "Allows ${Environment} management access to EC2, ASG, ELB, Lambda, EKS, Launch Templates"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # Launch Template
+          - Sid: "LaunchTemplateManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateLaunchTemplate"
+            Resource: "*"
+          - Sid: "LaunchTemplateManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteLaunchTemplate"
+              - "ec2:ModifyLaunchTemplate"
+              - "ec2:*LaunchTemplateVersion"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Auto Scaling Group
+          - Sid: "AutoScalingManagementBase"
+            Effect: "Allow"
+            Action:
+              - "autoscaling:LaunchInstances"
+            Resource: "*"
+          - Sid: "AutoScalingManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "autoscaling:*AutoScalingGroup"
+              - "autoscaling:*LoadBalancers"
+              - "autoscaling:*Policy"
+              - "autoscaling:*LoadBalancerTargetGroups"
+              - "autoscaling:*Processes"
+              - "autoscaling:*InstanceRefresh"
+              - "autoscaling:*LaunchConfiguration"
+              - "autoscaling:*Instances"
+              - "autoscaling:*Standby"
+              - "autoscaling:*LifecycleAction"
+              - "autoscaling:*Tags"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # EC2
+          - Sid: "Ec2ManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:*Tags"
+              - "ec2:RunInstances"
+            Resource: "*"
+          - Sid: "Ec2ManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:AssociateIamInstanceProfile"
+              - "ec2:RebootInstances"
+              - "ec2:StartInstances"
+              - "ec2:StopInstances"
+              - "ec2:TerminateInstances"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Load Balancer
+          - Sid: "LoadBalancerManagementBase"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:AddTags"
+            Resource: "*"
+          - Sid: "LoadBalancerManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:RemoveTags"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+
+Outputs:
+  ComputeServicesManagementPolicyArn:
+    Description: "ARN of the ComputeServicesManagementPolicy"
+    Value: !Ref ComputeServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-ComputeServicesManagementPolicy-arn"
+  ComputeServicesManagementPolicyId:
+    Description: "ID of the ComputeServicesManagementPolicy"
+    Value: !Ref ComputeServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-ComputeServicesManagementPolicy-id"

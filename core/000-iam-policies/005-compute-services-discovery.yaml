@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 000: Compute Services Discovery Policy"
+
+Resources:
+  ComputeServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-ComputeServicesDiscovery"
+      Description: "Allows read-only access to EC2, ASG, ELB, Lambda, EKS, Launch Templates"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "ec2:DescribeInstance*"
+              - "ec2:DescribeImage*"
+              - "ec2:DescribeVolume*"
+              - "ec2:DescribeSnapshot*"
+              - "ec2:DescribeKey*"
+              - "ec2:DescribeTags"
+              - "ec2:DescribeLaunchTemplate*"
+              - "ec2:GetLaunchTemplateData"
+              - "autoscaling:Describe*"
+              - "autoscaling:Get*"
+              - "elasticLoadBalancing:Describe*"
+              - "elasticloadbalancing:Describe*"
+              - "elasticloadbalancing:Get*"
+            Resource: "*"
+
+Outputs:
+  ComputeServicesDiscoveryPolicyArn:
+    Description: "ARN of the ComputeServicesDiscoveryPolicy"
+    Value: !GetAtt "ComputeServicesDiscoveryPolicy.PolicyArn"
+    Export:
+      Name: "core-ComputeServicesDiscoveryPolicy-arn"
+  ComputeServicesDiscoveryPolicyId:
+    Description: "ID of the ComputeServicesDiscoveryPolicy"
+    Value: !GetAtt "ComputeServicesDiscoveryPolicy.PolicyId"
+    Export:
+      Name: "core-ComputeServicesDiscoveryPolicy-id"

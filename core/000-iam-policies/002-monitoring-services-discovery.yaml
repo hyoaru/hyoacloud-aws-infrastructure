@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 000: Monitoring Services Discovery Policy"
+
+Resources:
+  MonitoringServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-MonitoringServicesDiscovery"
+      Description: "Allows read-only access to Compute Optimizer, Access Analyzer, Free Tier Discovery"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "compute-optimizer:Get*"
+              - "compute-optimizer:List*"
+              - "compute-optimizer:Describe*"
+              - "access-analyzer:Get*"
+              - "access-analyzer:List*"
+              - "access-analyzer:Check*"
+              - "access-analyzer:Validate*"
+              - "freetier:List*"
+              - "freetier:Get*"
+            Resource: "*"
+
+Outputs:
+  MonitoringServicesDiscoveryPolicyArn:
+    Description: "ARN of the MonitoringServicesDiscoveryPolicy"
+    Value: !GetAtt "MonitoringServicesDiscoveryPolicy.PolicyArn"
+    Export:
+      Name: "core-MonitoringServicesDiscoveryPolicy-arn"
+  MonitoringServicesDiscoveryPolicyId:
+    Description: "ID of the MonitoringServicesDiscoveryPolicy"
+    Value: !GetAtt "MonitoringServicesDiscoveryPolicy.PolicyId"
+    Export:
+      Name: "core-MonitoringServicesDiscoveryPolicy-id"

@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 000: Infrasturcture Services Discovery Policy"
+
+Resources:
+  InfrastructureServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-InfrastructureServicesDiscovery"
+      Description: "Allows read-only access to CloudFormation, CodeBuild, CloudWatch"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "cloudformation:Describe*"
+              - "cloudformation:List*"
+              - "cloudformation:Get*"
+              - "cloudformation:Validate*"
+              - "cloudwatch:Get*"
+              - "cloudwatch:List*"
+              - "cloudwatch:Describe*"
+            Resource: "*"
+
+Outputs:
+  InfrastructureServicesDiscoveryPolicyArn:
+    Description: "ARN of the InfrastructureServicesDiscoveryPolicy"
+    Value: !GetAtt "InfrastructureServicesDiscoveryPolicy.PolicyArn"
+    Export:
+      Name: "core-InfrastructureServicesDiscoveryPolicy-arn"
+  InfrastructureServicesDiscoveryPolicyId:
+    Description: "ID of the InfrastructureServicesDiscoveryPolicy"
+    Value: !GetAtt "InfrastructureServicesDiscoveryPolicy.PolicyId"
+    Export:
+      Name: "core-InfrastructureServicesDiscoveryPolicy-id"
