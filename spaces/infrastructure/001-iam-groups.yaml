@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Space Layer 002: User Groups"
+Description: "Space Layer 001: User Groups"
 
 Parameters:
   Environment:
