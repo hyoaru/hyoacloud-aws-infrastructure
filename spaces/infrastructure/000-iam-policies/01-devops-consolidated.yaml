@@ -19,6 +19,13 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
+          # Free Tier
+          - Sid: "FreeTierDiscovery"
+            Effect: Allow
+            Action:
+              - "freetier:List*"
+              - "freetier:Get*"
+            Resource: "*"
           # CloudFormation
           - Sid: "CloudFormationDiscovery"
             Effect: Allow
@@ -292,6 +299,41 @@ Resources:
             Effect: "Allow"
             Action:
               - "ec2:DeleteNetworkAcl*"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Load Balancer
+          - Sid: "LoadBalancerDiscovery"
+            Effect: "Allow"
+            Action:
+              - "elasticLoadBalancing:Describe*"
+              - "elasticloadbalancing:Describe*"
+              - "elasticloadbalancing:Get*"
+            Resource: "*"
+          - Sid: "LoadBalancerManagementBase"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:AddTags"
+            Resource: "*"
+          - Sid: "LoadBalancerManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:RemoveTags"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Target Groups
+          - Sid: "TargetGroupsManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:CreateTargetGroup"
+              - "elasticloadbalancing:DeleteTargetGroup"
+              - "elasticloadbalancing:DeregisterTargets"
+              - "elasticloadbalancing:ModifyTargetGroup"
+              - "elasticloadbalancing:RegisterTargets"
+              - "elasticloadbalancing:ModifyTargetGroupAttributes"
             Resource: "*"
             Condition:
               StringEquals:
