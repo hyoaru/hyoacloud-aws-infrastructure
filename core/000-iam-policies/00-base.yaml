@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Core Layer 000: Managed Policies"
+Description: "Core Layer 000: Base Policies"
 
 Resources:
   AccountUserCredentialsSelfManagementPolicy:

@@ -1,12 +1,12 @@
 deploy-core:
-	./scripts/deploy-core.sh $(layer)
+	./scripts/deploy-core.sh $(group) $(layer)
 
 destroy-core:
-	./scripts/destroy-core.sh $(layer)
+	./scripts/destroy-core.sh $(group) $(layer)
 
 deploy-space:
-	./scripts/deploy-space.sh $(env) $(layer)
+	./scripts/deploy-space.sh $(env) $(group) $(layer)
 
 destroy-space:
-	./scripts/destroy-space.sh $(env) $(layer)
+	./scripts/destroy-space.sh $(env) $(group) $(layer)
 

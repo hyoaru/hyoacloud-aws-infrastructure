@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Space Layer 000: Managed Policies"
+Description: "Space Layer 000: DevOps Consolidated Policy"
 
 Parameters:
   Environment:
@@ -11,42 +11,6 @@ Conditions:
   IsProd: !Equals [!Ref Environment, "prod"]
 
 Resources:
-  IamPassRolePolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: !Sub "${Environment}-IAMPassRole"
-      Description: "Allows users to assign specific IAM roles to EC2 instances to enable service-to-service permissions."
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "AllowEC2RoleDelegation"
-            Effect: Allow
-            Action: "iam:PassRole"
-            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
-  SsmEnvironmentRestrictedPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: !Sub "${Environment}-SSMEnvironmentRestricted"
-      Description: !Sub "Allows SSM Session Manager access only to ${Environment} instances."
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "SSMConnectRestrictedToEnvironment"
-            Effect: Allow
-            Action:
-              - "ssm:StartSession"
-            Resource:
-              - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*"
-            Condition:
-              StringEquals:
-                "aws:ResourceTag/Environment": !Ref Environment
-          - Sid: "SSMGeneralActions"
-            Effect: Allow
-            Action:
-              - "ssm:Describe*"
-              - "ssm:GetConnectionStatus"
-              - "ssm:*Session"
-            Resource: "*"
   DevOpsConsolidatedPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -334,26 +298,6 @@ Resources:
                 "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
-  IamPassRolePolicyArn:
-    Description: "ARN of the IamPassRolePolicy"
-    Value: !GetAtt "IamPassRolePolicy.PolicyArn"
-    Export:
-      Name: !Sub "${Environment}-IamPassRolePolicy-arn"
-  IamPassRolePolicyId:
-    Description: "ID of the IamPassRolePolicy"
-    Value: !GetAtt "IamPassRolePolicy.PolicyId"
-    Export:
-      Name: !Sub "${Environment}-IamPassRolePolicy-id"
-  SsmRestrictedPolicyArn:
-    Description: "ARN of the SsmEnvironmentRestrictedPolicy"
-    Value: !Ref SsmEnvironmentRestrictedPolicy
-    Export:
-      Name: !Sub "${Environment}-SsmRestrictedPolicy-arn"
-  SsmRestrictedPolicyId:
-    Description: "ID of the SsmEnvironmentRestrictedPolicy"
-    Value: !Ref SsmEnvironmentRestrictedPolicy
-    Export:
-      Name: !Sub "${Environment}-SsmRestrictedPolicy-id"
   DevOpsConsolidatedPolicyArn:
     Description: "ARN of the DevOpsConsolidatedPolicy"
     Value: !Ref DevOpsConsolidatedPolicy

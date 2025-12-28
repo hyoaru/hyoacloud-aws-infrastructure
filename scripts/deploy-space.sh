@@ -1,17 +1,18 @@
 #!/bin/bash
 set -e
 
-# Usage: ./scripts/deploy-space.sh [environment] [layer_name]
-# Example: ./scripts/deploy-space.sh dev 000-iam-policies
+# Usage: ./scripts/deploy-space.sh [environment] [group] [layer]
+# Example: ./scripts/deploy-space.sh dev 000-iam-policies 00-base
 
 ENVIRONMENT=$1
-LAYER=$2
+GROUP=$2
+LAYER=$3
 REGION="ap-southeast-1"
 
 # Input validation
-if [[ -z "${ENVIRONMENT}" || -z "${LAYER}" ]]; then
-  echo "Usage: ./scripts/deploy-space.sh [environment] [layer]"
-  echo "Example: ./scripts/deploy-space.sh dev 000-iam-policies"
+if [[ -z "${ENVIRONMENT}" || -z "${GROUP}" || -z "${LAYER}" ]]; then
+  echo "Usage: ./scripts/deploy-space.sh [environment] [group] [layer]"
+  echo "Example: ./scripts/deploy-space.sh dev 000-iam-policies 00-base"
   exit 1
 fi
 
@@ -20,9 +21,9 @@ CURRENT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIRECTORY="$(realpath "$CURRENT_DIRECTORY/..")"
 
 # Define file paths
-TEMPLATE_FILE="${ROOT_DIRECTORY}/spaces/infrastructure/${LAYER}.yaml"
-PARAMETER_FILE="${ROOT_DIRECTORY}/spaces/parameters/${ENVIRONMENT}/${LAYER}.json"
-STACK_NAME="space-${ENVIRONMENT}-${LAYER}"
+TEMPLATE_FILE="${ROOT_DIRECTORY}/spaces/infrastructure/${GROUP}/${LAYER}.yaml"
+PARAMETER_FILE="${ROOT_DIRECTORY}/spaces/parameters/${ENVIRONMENT}/${GROUP}/${LAYER}.json"
+STACK_NAME="space-${ENVIRONMENT}-${GROUP}-${LAYER}"
 
 if [[ ! -f "${TEMPLATE_FILE}" ]]; then
   echo "Template not found: $TEMPLATE_FILE"
