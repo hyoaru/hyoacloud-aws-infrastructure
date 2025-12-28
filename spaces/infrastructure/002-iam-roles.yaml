@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Space Layer 001: Roles"
+Description: "Space Layer 002: Roles"
 
 Parameters:
   Environment:
@@ -8,11 +8,11 @@ Parameters:
     AllowedValues: [dev, stage, prod]
 
 Resources:
-  Ec2SsmHostManagementRole:
+  SsmHostManagementRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "${Environment}-EC2SSMHostManagement"
-      Description: "This IAM Instance Profile grants Amazon EC2 instances the minimum necessary permissions to register and function as managed nodes within AWS Systems Manager (SSM)."
+      RoleName: !Sub "${Environment}-SSMHostManagement"
+      Description: "This IAM Instance Profile grants instances the minimum necessary permissions to register and function as managed nodes within AWS Systems Manager (SSM)."
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -29,26 +29,26 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
-  Ec2SsmHostManagementProfile:
+  SsmHostManagementProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: !Sub "${Environment}-EC2SSMHostManagementProfile"
+      InstanceProfileName: !Sub "${Environment}-SSMHostManagementProfile"
       Roles:
-        - !Ref Ec2SsmHostManagementRole
+        - !Ref SsmHostManagementRole
 
 Outputs:
-  Ec2SsmHostManagementRoleArn:
-    Description: "ARN of the Ec2SsmHostManagementRole"
-    Value: !GetAtt Ec2SsmHostManagementRole.Arn
+  SsmHostManagementRoleArn:
+    Description: "ARN of the SsmHostManagementRole"
+    Value: !GetAtt SsmHostManagementRole.Arn
     Export:
-      Name: !Sub "${Environment}-Ec2SsmHostManagementRole-arn"
-  Ec2SsmHostManagementRoleId:
-    Description: "ID of the Ec2SsmHostManagementRole"
-    Value: !GetAtt Ec2SsmHostManagementRole.RoleId
+      Name: !Sub "${Environment}-SsmHostManagementRole-arn"
+  SsmHostManagementRoleId:
+    Description: "ID of the SsmHostManagementRole"
+    Value: !GetAtt SsmHostManagementRole.RoleId
     Export:
-      Name: !Sub "${Environment}-Ec2SsmHostManagementRole-id"
-  Ec2SsmHostManagementProfileArn:
+      Name: !Sub "${Environment}-SsmHostManagementRole-id"
+  SsmHostManagementProfileArn:
     Description: "ARN of the EC2SSMHostManagementProfile"
-    Value: !GetAtt Ec2SsmHostManagementProfile.Arn
+    Value: !GetAtt SsmHostManagementProfile.Arn
     Export:
-      Name: !Sub "${Environment}-Ec2SsmHostManagementProfile-arn"
+      Name: !Sub "${Environment}-SsmHostManagementProfile-arn"
