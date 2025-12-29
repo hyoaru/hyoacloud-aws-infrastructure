@@ -92,6 +92,25 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          # Target Groups
+          - Sid: "TargetGroupsManagementBase"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:AddTags"
+            Resource: "*"
+          - Sid: "TargetGroupsManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:CreateTargetGroup"
+              - "elasticloadbalancing:DeleteTargetGroup"
+              - "elasticloadbalancing:DeregisterTargets"
+              - "elasticloadbalancing:ModifyTargetGroup"
+              - "elasticloadbalancing:RegisterTargets"
+              - "elasticloadbalancing:ModifyTargetGroupAttributes"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   ComputeServicesManagementPolicyArn:
