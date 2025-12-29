@@ -26,6 +26,7 @@ Resources:
               - "ec2:DescribeNat*"
               - "ec2:DescribeAddress*"
               - "ec2:DescribeEgressOnlyInternetGateways"
+              - "ec2:GetSecurityGroupsForVpc"
               - "elasticloadbalancing:DescribeSSLPolicies"
               - "elasticloadbalancing:GetTrustStore*"
               - "elasticloadbalancing:DescribeTrustStore*"
