@@ -12,7 +12,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: !Sub "${Environment}-NetworkServicesManagement"
-      Description: !Sub "Allows ${Environment} management access to VPC, Subnets, Route Table, Internet Gateway, Network ACLs, VPN, Security Groups, Target Groups, Route53, CloudFront, API Gateway"
+      Description: !Sub "Allows ${Environment} management access to VPC, Subnets, Route Table, Internet Gateway, Network ACLs, VPN, Security Groups, Route53, CloudFront, API Gateway"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -155,25 +155,6 @@ Resources:
             Effect: "Allow"
             Action:
               - "ec2:DeleteNetworkAcl*"
-            Resource: "*"
-            Condition:
-              StringEquals:
-                "aws:ResourceTag/Environment": !Ref Environment
-          # Target Groups
-          - Sid: "TargetGroupsManagementBase"
-            Effect: "Allow"
-            Action:
-              - "elasticloadbalancing:AddTags"
-            Resource: "*"
-          - Sid: "TargetGroupsManagementScoped"
-            Effect: "Allow"
-            Action:
-              - "elasticloadbalancing:CreateTargetGroup"
-              - "elasticloadbalancing:DeleteTargetGroup"
-              - "elasticloadbalancing:DeregisterTargets"
-              - "elasticloadbalancing:ModifyTargetGroup"
-              - "elasticloadbalancing:RegisterTargets"
-              - "elasticloadbalancing:ModifyTargetGroupAttributes"
             Resource: "*"
             Condition:
               StringEquals:
