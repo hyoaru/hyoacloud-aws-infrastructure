@@ -22,6 +22,10 @@ Resources:
           - Fn::ImportValue: !Sub "${Environment}-two-tier-AppSecurityGroup-id"
         MetadataOptions:
           InstanceMetadataTags: enabled
+        UserData:
+          Fn::Base64: |
+            #!/bin/bash
+            nohup python3 -m http.server 8080 > server.log 2>&1 &
         TagSpecifications:
           - ResourceType: instance
             Tags:
