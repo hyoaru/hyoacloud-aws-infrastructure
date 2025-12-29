@@ -18,6 +18,7 @@ Resources:
               - "ec2:DescribeSnapshot*"
               - "ec2:DescribeKey*"
               - "ec2:DescribeTags"
+              - "ec2:DescribeAccount*"
               - "ec2:DescribeLaunchTemplate*"
               - "ec2:GetLaunchTemplateData"
               - "autoscaling:Describe*"
