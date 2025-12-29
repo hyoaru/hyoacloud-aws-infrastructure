@@ -29,6 +29,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "002-iam-roles-000-base"
   SsmHostManagementProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:

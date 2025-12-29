@@ -24,6 +24,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-001-connectivity"
   # VPC gateway attachment
   MainInternetGatewayVpcAttachment:
     Type: AWS::EC2::VPCGatewayAttachment

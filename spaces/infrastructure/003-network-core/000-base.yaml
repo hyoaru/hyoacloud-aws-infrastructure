@@ -27,6 +27,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-000-base"
   # Subnets
   MainPublicSubnet1:
     Type: AWS::EC2::Subnet
@@ -58,6 +60,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-000-base"
   MainPrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -73,6 +77,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-000-base"
   MainPrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -88,6 +94,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-000-base"
   # Route tables
   MainPublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -102,6 +110,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-000-base"
   MainPrivateRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -115,6 +125,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-000-base"
   MainPrivateRouteTable2:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -128,6 +140,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-000-base"
   # Subnet route table associations
   MainPublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -157,6 +171,11 @@ Outputs:
     Value: !GetAtt MainVpc.VpcId
     Export:
       Name: !Sub "${Environment}-MainVpc-id"
+  MainVpcCidrBlock:
+    Description: "CidrBlock of the MainVpc"
+    Value: !GetAtt MainVpc.CidrBlock
+    Export:
+      Name: !Sub "${Environment}-MainVpc-cidr-block"
   # Subnets
   MainPublicSubnet1Id:
     Description: "ID of the MainPublicSubnet1"

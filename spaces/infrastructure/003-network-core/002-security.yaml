@@ -23,6 +23,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-002-security"
   MainPrivateNacl:
     Type: AWS::EC2::NetworkAcl
     Properties:
@@ -37,6 +39,8 @@ Resources:
           Value: "DevOps"
         - Key: Platform
           Value: "space"
+        - Key: Layer
+          Value: "003-network-core-002-security"
   # NACL Rules
   InboundPublicAllNaclEntry:
     Type: AWS::EC2::NetworkAclEntry
