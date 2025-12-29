@@ -21,11 +21,11 @@ Resources:
             Effect: "Allow"
             Action:
               - "ec2:CreateLaunchTemplate"
+              - "ec2:DeleteLaunchTemplate"
             Resource: "*"
           - Sid: "LaunchTemplateManagementScoped"
             Effect: "Allow"
             Action:
-              - "ec2:DeleteLaunchTemplate"
               - "ec2:ModifyLaunchTemplate"
               - "ec2:*LaunchTemplateVersion"
             Resource: "*"
