@@ -10,3 +10,9 @@ deploy-space:
 destroy-space:
 	./scripts/destroy-space.sh $(env) $(group) $(layer)
 
+deploy-project:
+	./scripts/deploy-project.sh $(env) $(project) $(group) $(layer)
+
+destroy-project:
+	./scripts/destroy-project.sh $(env) $(project) $(group) $(layer)
+
