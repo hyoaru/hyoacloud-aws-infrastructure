@@ -32,6 +32,8 @@ Resources:
             Effect: "Allow"
             Action:
               - "ec2:DeleteVpc"
+              - "ec2:AssociateDhcpOptions"
+              - "ec2:DeleteDhcpOptions"
             Resource: "*"
             Condition:
               StringEquals:
@@ -63,6 +65,29 @@ Resources:
               - "ec2:DeleteInternetGateway"
               - "ec2:AttachInternetGateway"
               - "ec2:DetachInternetGateway"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          # Network Elastic IP
+          - Sid: "ElasticIpManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:*Address"
+            Resource: "*"
+          # Network NAT Gateway
+          - Sid: "NatGatewayManagementBase"
+            Effect: "Allow"
+            Action:
+              - "ec2:CreateNatGateway"
+            Resource: "*"
+          - Sid: "NatGatewayManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "ec2:DeleteNatGateway"
+              - "ec2:AttachNatGateway"
+              - "ec2:DetachNatGateway"
+              - "ec2:*NatGatewayAddress"
             Resource: "*"
             Condition:
               StringEquals:
