@@ -1,0 +1,131 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 003: Network Connectivity Extension NAT"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  Region:
+    Type: String
+    Description: "The region where the resources will reside."
+
+Resources:
+  # Elastic IPs
+  NatGatewayEip1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-nat-eip-${Region}a"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "003-network-core-003-connectivity-extension-nat"
+  NatGatewayEip2:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-nat-eip-${Region}b"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "003-network-core-003-connectivity-extension-nat"
+  # NAT Gateways
+  NatGateway1:
+    Type: AWS::EC2::NatGateway
+    DependsOn: NatGatewayEip1
+    Properties:
+      AllocationId: !GetAtt NatGatewayEip1.AllocationId
+      SubnetId: !ImportValue
+        Fn::Sub: "${Environment}-MainPublicSubnet1-id"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-natgw-${Region}a"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "003-network-core-003-connectivity-extension-nat"
+  NatGateway2:
+    Type: AWS::EC2::NatGateway
+    DependsOn: NatGatewayEip2
+    Properties:
+      AllocationId: !GetAtt NatGatewayEip2.AllocationId
+      SubnetId: !ImportValue
+        Fn::Sub: "${Environment}-MainPublicSubnet2-id"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-natgw-${Region}b"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "003-network-core-003-connectivity-extension-nat"
+  # Routes
+  NatRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !ImportValue
+        Fn::Sub: "${Environment}-MainPrivateRouteTable1-id"
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway1
+  NatRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !ImportValue
+        Fn::Sub: "${Environment}-MainPrivateRouteTable2-id"
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway2
+
+Outputs:
+  # Elastic IPs
+  NatGatewayEip1Id:
+    Description: "ID of the NatGatewayEip1"
+    Value: !GetAtt NatGatewayEip1.AllocationId
+    Export:
+      Name: !Sub "${Environment}-NatGatewayEip1-id"
+  NatGatewayEip2Id:
+    Description: "ID of the NatGatewayEip2"
+    Value: !GetAtt NatGatewayEip2.AllocationId
+    Export:
+      Name: !Sub "${Environment}-NatGatewayEip2-id"
+  # NAT Gateways
+  NatGateway1Id:
+    Description: "ID of the NatGateway1"
+    Value: !GetAtt NatGateway1.NatGatewayId
+    Export:
+      Name: !Sub "${Environment}-NatGateway1-id"
+  NatGateway2Id:
+    Description: "ID of the NatGateway2"
+    Value: !GetAtt NatGateway2.NatGatewayId
+    Export:
+      Name: !Sub "${Environment}-NatGateway2-id"
+  # Routes
+  NatRoute1Id:
+    Description: "ID of the NatRoute1"
+    Value: !Ref NatRoute1
+    Export:
+      Name: !Sub "${Environment}-NatRoute1-id"
+  NatRoute2Id:
+    Description: "ID of the NatRoute2"
+    Value: !Ref NatRoute2
+    Export:
+      Name: !Sub "${Environment}-NatRoute2-id"
