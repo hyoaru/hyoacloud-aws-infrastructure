@@ -22,7 +22,7 @@ CURRENT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIRECTORY="$(realpath "$CURRENT_DIRECTORY/..")"
 
 # Define the parameters
-PARAMETER_FILE="${ROOT_DIRECTORY}/projects/${PROJECT}/parameters/${ENVIRONMENT}/${GROUP}/${LAYER}.json"
+TEMPLATE_FILE="${ROOT_DIRECTORY}/projects/${PROJECT}/infrastructure/${GROUP}/${LAYER}.yaml"
 STACK_NAME="project-${PROJECT}-${ENVIRONMENT}-${GROUP}-${LAYER}"
 
 if [[ ! -f "${TEMPLATE_FILE}" ]]; then
