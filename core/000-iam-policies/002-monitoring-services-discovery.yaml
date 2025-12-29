@@ -6,7 +6,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: "core-MonitoringServicesDiscovery"
-      Description: "Allows read-only access to Compute Optimizer, Access Analyzer, Free Tier Discovery"
+      Description: "Allows read-only access to Compute Optimizer, Access Analyzer, Free Tier Discovery, Cost Explorer, Cost Optimization"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -21,6 +21,16 @@ Resources:
               - "access-analyzer:Validate*"
               - "freetier:List*"
               - "freetier:Get*"
+              - "ce:List*"
+              - "ce:Get*"
+              - "ce:Describe*"
+              - "cost-optimization-hub:List*"
+              - "cost-optimization-hub:Get*"
+              - "servicecatalog:List*"
+              - "servicecatalog:Get*"
+              - "servicecatalog:Describe*"
+              - "servicecatalog:Search*"
+              - "servicecatalog:Scan*"
             Resource: "*"
 
 Outputs:
