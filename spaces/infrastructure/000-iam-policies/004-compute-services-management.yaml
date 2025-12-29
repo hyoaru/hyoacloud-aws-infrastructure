@@ -81,28 +81,39 @@ Resources:
             Action:
               - "elasticloadbalancing:AddTags"
             Resource: "*"
-          - Sid: "LoadBalancerManagementScoped"
+          - Sid: "LoadBalancerManagementScopedByTags"
             Effect: "Allow"
             Action:
               - "elasticloadbalancing:RemoveTags"
-              - "elasticloadbalancing:Create*"
-              - "elasticloadbalancing:Delete*"
-              - "elasticloadbalancing:Modify*"
+              - "elasticloadbalancing:CreateLoadBalancer"
+              - "elasticloadbalancing:DeleteLoadBalancer"
+              - "elasticloadbalancing:ModifyLoadBalancer"
+              - "elasticloadbalancing:CreateTrustStore"
+              - "elasticloadbalancing:DeleteTrustStore"
+              - "elasticloadbalancing:ModifyTrustStore"
+              - "elasticloadbalancing:CreateListener"
+              - "elasticloadbalancing:ModifyListener"
+              - "elasticloadbalancing:AddListenerCertificates"
             Resource: "*"
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          - Sid: "LoadBalancerManagementScopedByPrefix"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:DeleteListener"
+            Resource:
+              - !Sub "arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener/app/${Environment}-*/*/*"
           # Target Groups
           - Sid: "TargetGroupsManagementBase"
             Effect: "Allow"
             Action:
               - "elasticloadbalancing:AddTags"
             Resource: "*"
-          - Sid: "TargetGroupsManagementScoped"
+          - Sid: "TargetGroupsManagementScopedByTags"
             Effect: "Allow"
             Action:
               - "elasticloadbalancing:CreateTargetGroup"
-              - "elasticloadbalancing:DeleteTargetGroup"
               - "elasticloadbalancing:DeregisterTargets"
               - "elasticloadbalancing:ModifyTargetGroup"
               - "elasticloadbalancing:RegisterTargets"
@@ -111,6 +122,11 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          - Sid: "TargetGroupsManagementScopedByPrefix"
+            Effect: "Allow"
+            Action:
+              - "elasticloadbalancing:DeleteTargetGroup"
+            Resource: !Sub "arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:targetgroup/${Environment}-*/*"
 
 Outputs:
   ComputeServicesManagementPolicyArn:
