@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two-Tier Layer 001: Application Load Balancer"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  AppTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${Environment}-two-tier-app-tg"
+      Port: 8080
+      Protocol: HTTP
+      VpcId: !ImportValue
+        Fn::Sub: "${Environment}-MainVpc-id"
+      TargetType: instance
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-app-tg"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "001-app-core-001-application-load-balancer"
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub "${Environment}-two-tier-alb"
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups:
+        - !ImportValue
+          Fn::Sub: "${Environment}-two-tier-AlbSecurityGroup-id"
+      Subnets:
+        - !ImportValue
+          Fn::Sub: "${Environment}-MainPublicSubnet1-id"
+        - !ImportValue
+          Fn::Sub: "${Environment}-MainPublicSubnet2-id"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-alb"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "001-app-core-001-application-load-balancer"
+  AlbListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn:
+      - AppTargetGroup
+      - ApplicationLoadBalancer
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref AppTargetGroup
+
+Outputs:
+  AppTargetGroupArn:
+    Description: "ARN of the AppTargetGroup"
+    Value: !GetAtt "AppTargetGroup.TargetGroupArn"
+    Export:
+      Name: !Sub "${Environment}-two-tier-AppTargetGroup-arn"
+  ApplicationLoadBalancerArn:
+    Description: "ARN of the ApplicationLoadBalancer"
+    Value: !GetAtt "ApplicationLoadBalancer.LoadBalancerArn"
+    Export:
+      Name: !Sub "${Environment}-two-tier-ApplicationLoadBalancer-arn"
+  AlbListenerArn:
+    Description: "ARN of the AlbListener"
+    Value: !GetAtt "AlbListener.ListenerArn"
+    Export:
+      Name: !Sub "${Environment}-two-tier-AlbListener-arn"

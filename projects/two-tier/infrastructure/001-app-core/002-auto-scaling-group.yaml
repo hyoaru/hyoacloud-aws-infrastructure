@@ -26,6 +26,8 @@ Resources:
           Fn::Sub: "${Environment}-two-tier-LaunchTemplate-id"
         Version: !ImportValue
           Fn::Sub: "${Environment}-two-tier-LaunchTemplate-latest-version-number"
+      TargetGroupARNs:
+        - Fn::ImportValue: !Sub "${Environment}-two-tier-AppTargetGroup-arn"
       VPCZoneIdentifier:
         - Fn::ImportValue: !Sub "${Environment}-MainPrivateSubnet1-id"
         - Fn::ImportValue: !Sub "${Environment}-MainPrivateSubnet2-id"
@@ -40,7 +42,7 @@ Resources:
           Value: "two-tier"
           PropagateAtLaunch: true
         - Key: Layer
-          Value: "001-app-core-001-auto-scaling-group"
+          Value: "001-app-core-002-auto-scaling-group"
           PropagateAtLaunch: true
 
 Outputs:
