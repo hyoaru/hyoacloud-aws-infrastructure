@@ -85,6 +85,9 @@ Resources:
             Effect: "Allow"
             Action:
               - "elasticloadbalancing:RemoveTags"
+              - "elasticloadbalancing:Create*"
+              - "elasticloadbalancing:Delete*"
+              - "elasticloadbalancing:Modify*"
             Resource: "*"
             Condition:
               StringEquals:
