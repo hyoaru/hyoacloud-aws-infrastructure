@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two-Tier Layer 001: Auto Scaling Group"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  DesiredCapacity:
+    Type: Number
+  MinSize:
+    Type: Number
+  MaxSize:
+    Type: Number
+
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: !Sub "${Environment}-two-tier-app-server-asg"
+      DesiredCapacity: !Ref DesiredCapacity
+      MaxSize: !Ref MaxSize
+      MinSize: !Ref MinSize
+      LaunchTemplate:
+        LaunchTemplateId: !ImportValue
+          Fn::Sub: "${Environment}-two-tier-LaunchTemplate-id"
+        Version: !ImportValue
+          Fn::Sub: "${Environment}-two-tier-LaunchTemplate-latest-version-number"
+      VPCZoneIdentifier:
+        - Fn::ImportValue: !Sub "${Environment}-MainPrivateSubnet1-id"
+        - Fn::ImportValue: !Sub "${Environment}-MainPrivateSubnet2-id"
+      Tags:
+        - Key: Environment
+          Value: !Sub "${Environment}"
+          PropagateAtLaunch: true
+        - Key: Owner
+          Value: "DevOps"
+          PropagateAtLaunch: true
+        - Key: Platform
+          Value: "two-tier"
+          PropagateAtLaunch: true
+        - Key: Layer
+          Value: "001-app-core-001-auto-scaling-group"
+          PropagateAtLaunch: true
+
+Outputs:
+  AutoScalingGroupArn:
+    Description: "ARN of the AutoScalingGroup"
+    Value: !GetAtt AutoScalingGroup.AutoScalingGroupARN
+    Export:
+      Name: !Sub "${Environment}-two-tier-AutoScalingGroup-arn"

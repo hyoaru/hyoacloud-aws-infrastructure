@@ -1,0 +1,6 @@
+{
+  "Environment": "prod",
+  "DesiredCapacity": 2,
+  "MaxSize": 2,
+  "MinSize": 1
+}
