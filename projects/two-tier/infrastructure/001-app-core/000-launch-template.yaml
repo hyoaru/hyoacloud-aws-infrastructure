@@ -23,7 +23,19 @@ Resources:
         MetadataOptions:
           InstanceMetadataTags: enabled
         TagSpecifications:
-          - ResourceType: launch-template
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub "${Environment}-two-tier-app-server-0x"
+              - Key: Environment
+                Value: !Sub "${Environment}"
+              - Key: Owner
+                Value: "DevOps"
+              - Key: Platform
+                Value: "two-tier"
+              - Key: Layer
+                Value: "001-app-core-000-launch-template"
+          - ResourceType: volume
             Tags:
               - Key: Environment
                 Value: !Sub "${Environment}"
@@ -33,10 +45,8 @@ Resources:
                 Value: "two-tier"
               - Key: Layer
                 Value: "001-app-core-000-launch-template"
-          - ResourceType: instance
+          - ResourceType: network-interface
             Tags:
-              - Key: Name
-                Value: !Sub "${Environment}-two-tier-app-server-0x"
               - Key: Environment
                 Value: !Sub "${Environment}"
               - Key: Owner
