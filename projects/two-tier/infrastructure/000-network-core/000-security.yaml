@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two-Tier Layer 000: Network Security"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  # Security Groups
+  AlbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub "${Environment} ALB Security Group for Two-Tier Project"
+      VpcId: !ImportValue
+        Fn::Sub: "${Environment}-MainVpc-id"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-web-alb-sg"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "000-network-core-000-base"
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub "${Environment} App Server Security Group for Two-Tier Project"
+      VpcId: !ImportValue
+        Fn::Sub: "${Environment}-MainVpc-id"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-app-server-sg"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "000-network-core-000-base"
+  # Security Group Rules
+  WebAlbSgIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref AlbSecurityGroup
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+      Description: "Allow public HTTP"
+  AppServerSgIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref AppSecurityGroup
+      IpProtocol: tcp
+      FromPort: 8080
+      ToPort: 8080
+      CidrIp: !ImportValue
+        Fn::Sub: ${Environment}-MainVpc-cidr-block
+  AppToInternetSgEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref AppSecurityGroup
+      IpProtocol: -1
+      CidrIp: 0.0.0.0/0
+      Description: "Allow ALL outbound traffic to the internet"
+
+Outputs:
+  # Security Groups
+  AlbSecurityGroupId:
+    Description: "ID of the AlbSecurityGroup"
+    Value: !GetAtt AlbSecurityGroup.GroupId
+    Export:
+      Name: !Sub "${Environment}-two-tier-AlbSecurityGroup-id"
+  AppSecurityGroupId:
+    Description: "ID of the AppSecurityGroup"
+    Value: !GetAtt AppSecurityGroup.GroupId
+    Export:
+      Name: !Sub "${Environment}-two-tier-AppSecurityGroup-id"

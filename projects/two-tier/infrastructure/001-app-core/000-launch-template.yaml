@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two-Tier Layer 001: Launch Template"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub "${Environment}-two-tier-app-server-launch-template"
+      LaunchTemplateData:
+        ImageId: ami-00d8fc944fb171e29
+        InstanceType: t3.micro
+        IamInstanceProfile:
+          Arn: !ImportValue
+            Fn::Sub: "${Environment}-SsmHostManagementProfile-arn"
+        SecurityGroupIds:
+          - Fn::ImportValue: !Sub "${Environment}-two-tier-AppSecurityGroup-id"
+        MetadataOptions:
+          InstanceMetadataTags: enabled
+        TagSpecifications:
+          - ResourceType: launch-template
+            Tags:
+              - Key: Environment
+                Value: !Sub "${Environment}"
+              - Key: Owner
+                Value: "DevOps"
+              - Key: Platform
+                Value: "two-tier"
+              - Key: Layer
+                Value: "001-app-core-000-launch-template"
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub "${Environment}-two-tier-app-server-0x"
+              - Key: Environment
+                Value: !Sub "${Environment}"
+              - Key: Owner
+                Value: "DevOps"
+              - Key: Platform
+                Value: "two-tier"
+              - Key: Layer
+                Value: "001-app-core-000-launch-template"
+
+Outputs:
+  LaunchTemplateId:
+    Description: "ID of the LaunchTemplate"
+    Value: !GetAtt "LaunchTemplate.LaunchTemplateId"
+    Export:
+      Name: !Sub "${Environment}-two-tier-LaunchTemplate-id"
+  LaunchTemplateLatestVersionNumber:
+    Description: "Latest version number of the LaunchTemplate"
+    Value: !GetAtt "LaunchTemplate.LatestVersionNumber"
+    Export:
+      Name: !Sub "${Environment}-two-tier-LaunchTemplate-latest-version-number"
