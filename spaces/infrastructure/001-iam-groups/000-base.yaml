@@ -21,6 +21,7 @@ Resources:
       GroupName: !Sub "${Environment}-MonitoringServicesOperators"
       ManagedPolicyArns:
         - Fn::ImportValue: "core-MonitoringServicesDiscoveryPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-MonitoringServicesManagementPolicy-arn"
   InfrastructureServicesOperatorsGroup:
     Type: AWS::IAM::Group
     Properties:

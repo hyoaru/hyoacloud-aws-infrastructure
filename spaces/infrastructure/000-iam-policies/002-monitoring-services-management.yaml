@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 000: Monitoring Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  MonitoringServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-MonitoringServicesManagement"
+      Description: !Sub "Allows ${Environment} management access to Compute Optimizer, Access Analyzer, Free Tier Discovery, Cost Explorer, Cost Optimization"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "CloudwatchManagementBase"
+            Effect: Allow
+            Action:
+              - "logs:Tag*"
+            Resource: "*"
+          - Sid: "CloudwatchManagementScopedByTags"
+            Effect: Allow
+            Action:
+              - "logs:Untag*"
+              - "logs:Create*"
+              - "logs:Update*"
+              - "logs:Put*"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+          - Sid: "CloudwatchManagementScopedByPrefix"
+            Effect: Allow
+            Action:
+              - "logs:Delete*"
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${Environment}-*:log-stream:"
+
+Outputs:
+  MonitoringServicesManagementPolicyArn:
+    Description: "ARN of the MonitoringServicesManagementPolicy"
+    Value: !Ref MonitoringServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-MonitoringServicesManagementPolicy-arn"
+  MonitoringServicesManagementPolicyId:
+    Description: "ID of the MonitoringServicesManagementPolicy"
+    Value: !Ref MonitoringServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-MonitoringServicesManagementPolicy-id"
