@@ -31,6 +31,14 @@ Resources:
               - "servicecatalog:Describe*"
               - "servicecatalog:Search*"
               - "servicecatalog:Scan*"
+              - "logs:List*"
+              - "logs:Get*"
+              - "logs:Filter*"
+              - "logs:Describe*"
+              - "logs:Start*"
+              - "logs:Stop*"
+              - "logs:Test*"
+              - "logs:Unmask*"
             Resource: "*"
 
 Outputs:
