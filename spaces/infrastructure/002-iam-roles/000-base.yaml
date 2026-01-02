@@ -37,6 +37,49 @@ Resources:
       InstanceProfileName: !Sub "${Environment}-SSMHostManagementProfile"
       Roles:
         - !Ref SsmHostManagementRole
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-LambdaExecutionRole"
+      Description: !Sub "Execution role for ${Environment} EC2/RDS Scheduler Lambda to manage instance states."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: ScopedResourceManagement
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowDescribeInstances
+                Effect: Allow
+                Action:
+                  - "ec2:DescribeInstances"
+                Resource: "*"
+              - Sid: AllowStartStopTaggedInstances
+                Effect: Allow
+                Action:
+                  - "ec2:StartInstances"
+                  - "ec2:StopInstances"
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    "aws:ResourceTag/Environment": !Ref Environment
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+      Tags:
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "002-iam-roles-000-base"
 
 Outputs:
   SsmHostManagementRoleArn:
@@ -54,3 +97,13 @@ Outputs:
     Value: !GetAtt SsmHostManagementProfile.Arn
     Export:
       Name: !Sub "${Environment}-SsmHostManagementProfile-arn"
+  LambdaExecutionRoleArn:
+    Description: "ARN of the LambdaExecutionRole"
+    Value: !GetAtt LambdaExecutionRole.Arn
+    Export:
+      Name: !Sub "${Environment}-LambdaExecutionRole-arn"
+  LambdaExecutionRoleId:
+    Description: "ID of the LambdaExecutionRole"
+    Value: !GetAtt LambdaExecutionRole.RoleId
+    Export:
+      Name: !Sub "${Environment}-LambdaExecutionRole-id"
