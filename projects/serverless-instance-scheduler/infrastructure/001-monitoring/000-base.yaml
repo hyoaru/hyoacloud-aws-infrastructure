@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Serverless Instance Scheduler Layer 001: Monitoring"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${Environment}-devops-ec2-instance-scheduler"
+      RetentionInDays: 14
+      Tags:
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "serverless-instance-scheduler"
+        - Key: Layer
+          Value: "000-iam-roles-000-base"
+
+Outputs:
+  LogGroupArn:
+    Description: "ARN of the LogGroup"
+    Value: !GetAtt LogGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-serverless-instance-scheduler-LogGroup-arn"
