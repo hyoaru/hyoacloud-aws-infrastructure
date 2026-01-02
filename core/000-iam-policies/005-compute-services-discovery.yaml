@@ -26,6 +26,9 @@ Resources:
               - "elasticLoadBalancing:Describe*"
               - "elasticloadbalancing:Describe*"
               - "elasticloadbalancing:Get*"
+              - "lambda:List*"
+              - "lambda:Get*"
+              - "lambda:Check*"
             Resource: "*"
 
 Outputs:
