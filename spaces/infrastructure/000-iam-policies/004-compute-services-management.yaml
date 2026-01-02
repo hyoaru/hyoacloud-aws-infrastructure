@@ -127,6 +127,31 @@ Resources:
             Action:
               - "elasticloadbalancing:DeleteTargetGroup"
             Resource: !Sub "arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:targetgroup/${Environment}-*/*"
+          # Lambda
+          - Sid: "LambdaManagementBase"
+            Effect: "Allow"
+            Action:
+              - "lambda:*Resource"
+            Resource: "*"
+          - Sid: "LambdaManagementScopedByTags"
+            Effect: "Allow"
+            Action:
+              - "lambda:Create*"
+              - "lambda:Delete*"
+              - "lambda:Invoke*"
+              - "lambda:Publish*"
+              - "lambda:Put*"
+              - "lambda:Update*"
+              - "lambda:Send*"
+              - "lambda:Stop*"
+              - "lambda:Add*"
+              - "lambda:Remove*"
+              - "lambda:Disable*"
+              - "lambda:Enable*"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
 
 Outputs:
   ComputeServicesManagementPolicyArn:
