@@ -16,7 +16,6 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          # IAM Policy
           - Sid: "IamPolicyManagementScoped"
             Effect: "Allow"
             Action:
@@ -24,7 +23,6 @@ Resources:
               - "iam:DeletePolicy*"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
-          # IAM Groups
           - Sid: "IamGroupManagementScoped"
             Effect: "Allow"
             Action:
@@ -32,7 +30,6 @@ Resources:
               - "iam:*GroupPolicy"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
-          # IAM Role
           - Sid: "IamRoleManagementScoped"
             Effect: "Allow"
             Action:
