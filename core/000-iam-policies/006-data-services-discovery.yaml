@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 000: Data Services Discovery Policy"
+
+Resources:
+  DataServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-DataServicesDiscovery"
+      Description: "Allows read-only access to S3, EBS, EFS, Glacier"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "s3:List*"
+              - "s3:Get*"
+              - "s3:Describe*"
+            Resource: "*"
+
+Outputs:
+  DataServicesDiscoveryPolicyArn:
+    Description: "ARN of the DataServicesDiscoveryPolicy"
+    Value: !GetAtt "DataServicesDiscoveryPolicy.PolicyArn"
+    Export:
+      Name: "core-DataServicesDiscoveryPolicy-arn"
+  DataServicesDiscoveryPolicyId:
+    Description: "ID of the DataServicesDiscoveryPolicy"
+    Value: !GetAtt "DataServicesDiscoveryPolicy.PolicyId"
+    Export:
+      Name: "core-DataServicesDiscoveryPolicy-id"

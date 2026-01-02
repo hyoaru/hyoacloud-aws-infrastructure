@@ -45,6 +45,13 @@ Resources:
         - Fn::ImportValue: !Sub "${Environment}-ComputeServicesManagementPolicy-arn"
         - Fn::ImportValue: !Sub "${Environment}-IamPassRolePolicy-arn"
         - Fn::ImportValue: !Sub "${Environment}-SsmRestrictedPolicy-arn"
+  DataServicesOperatorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-DataServicesOperators"
+      ManagedPolicyArns:
+        - Fn::ImportValue: "core-DataServicesDiscoveryPolicy-arn"
+        - Fn::ImportValue: !Sub "${Environment}-DataServicesManagementPolicy-arn"
 
 Outputs:
   IdentityServicesOperatorsGroupArn:
@@ -72,3 +79,8 @@ Outputs:
     Value: !GetAtt ComputeServicesOperatorsGroup.Arn
     Export:
       Name: !Sub "${Environment}-ComputeServicesOperatorsGroup-arn"
+  DataServicesOperatorsGroupArn:
+    Description: "ARN of the DataServicesOperatorsGroup"
+    Value: !GetAtt DataServicesOperatorsGroup.Arn
+    Export:
+      Name: !Sub "${Environment}-DataServicesOperatorsGroup-arn"

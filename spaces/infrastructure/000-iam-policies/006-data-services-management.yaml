@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer 000: Data Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  DataServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-DataServicesManagement"
+      Description: !Sub "Allows ${Environment} management access to S3, EBS, EFS, Glacier"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # S3
+          - Sid: "S3ManagementBase"
+            Effect: "Allow"
+            Action:
+              - "s3:Tag*"
+            Resource: "*"
+          - Sid: "S3ManagementScopedByTags"
+            Effect: "Allow"
+            Action:
+              - "s3:Untag*"
+              - "s3:Create*"
+              - "s3:Delete*"
+              - "s3:Put*"
+              - "s3:Pause*"
+              - "s3:Initiate*"
+              - "s3:Replicate*"
+              - "s3:Restore*"
+              - "s3:Submit*"
+              - "s3:Associate*"
+              - "s3:Dissociate*"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+
+Outputs:
+  DataServicesManagementPolicyArn:
+    Description: "ARN of the DataServicesManagementPolicy"
+    Value: !Ref DataServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-DataServicesManagementPolicy-arn"
+  DataServicesManagementPolicyId:
+    Description: "ID of the DataServicesManagementPolicy"
+    Value: !Ref DataServicesManagementPolicy
+    Export:
+      Name: !Sub "${Environment}-DataServicesManagementPolicy-id"
