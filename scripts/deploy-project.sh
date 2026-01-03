@@ -35,7 +35,7 @@ fi
 if [[ -f "$PARAMETER_FILE" ]]; then
   # Convert JSON file to "Key=Value" format for CLI
   PARAMS=$(jq -r 'to_entries | map("\(.key)=\(.value)") | .[]' $PARAMETER_FILE)
-  PARAMETER_OVERRIDES="--parameter-overrides Region=${REGION} $PARAMS"
+  PARAMETER_OVERRIDES="--parameter-overrides Region=${REGION} Project=${PROJECT} $PARAMS"
 else
   echo "No parameter file found for ${ENVIRONMENT}. Using defaults."
   PARAMETER_OVERRIDES=""
