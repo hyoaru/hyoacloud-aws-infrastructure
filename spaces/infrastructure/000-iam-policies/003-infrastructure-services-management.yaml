@@ -32,6 +32,23 @@ Resources:
             Resource:
               - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*/*"
               - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*"
+          # ECR
+          - Sid: "ECRManagementBase"
+            Effect: Allow
+            Action:
+              - "ecr:Tag*"
+              - "ecr:Untag*"
+              - "ecr:Create*"
+              - "ecr:Delete*"
+              - "ecr:Initiate*"
+              - "ecr:Push*"
+              - "ecr:Replicate*"
+              - "ecr:Start*"
+              - "ecr:Update*"
+              - "ecr:Upload*"
+              - "ecr:Complete*"
+              - "ecr:Put*"
+            Resource: "*"
 
 Outputs:
   InfrastructureServicesManagementPolicyArn:

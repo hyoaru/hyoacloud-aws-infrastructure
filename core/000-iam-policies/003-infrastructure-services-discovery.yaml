@@ -19,6 +19,11 @@ Resources:
               - "cloudwatch:Get*"
               - "cloudwatch:List*"
               - "cloudwatch:Describe*"
+              - "ecr:List*"
+              - "ecr:Describe*"
+              - "ecr:Batch*"
+              - "ecr:Get*"
+              - "ecr:Validate*"
             Resource: "*"
 
 Outputs:
