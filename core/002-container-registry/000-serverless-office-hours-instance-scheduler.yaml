@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 002: Serverless Office Hours Instance Scheduler Container Registry"
+
+Resources:
+  InstanceSchedulerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: "serverless-office-hours-instance-scheduler"
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Expire untagged images older than 14 days",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 14
+                },
+                "action": { "type": "expire" }
+              },
+              {
+                "rulePriority": 2,
+                "description": "Keep only the last 5 tagged images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5
+                },
+                "action": { "type": "expire" }
+              }
+            ]
+          }
+      Tags:
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "core"
+        - Key: Layer
+          Value: "002-container-registry-000-serverless-office-hours-instance-scheduler"
+
+Outputs:
+  InstanceSchedulerRepositoryArn:
+    Description: "ARN of the InstanceSchedulerRepository"
+    Value: !GetAtt InstanceSchedulerRepository.Arn
+    Export:
+      Name: !Sub "core-InstanceSchedulerRepository-arn"
+  InstanceSchedulerRepositoryUri:
+    Description: "URI of the InstanceSchedulerRepository"
+    Value: !GetAtt InstanceSchedulerRepository.RepositoryUri
+    Export:
+      Name: !Sub "core-InstanceSchedulerRepository-uri"
