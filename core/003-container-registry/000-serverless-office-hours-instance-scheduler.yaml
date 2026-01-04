@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Core Layer 002: Serverless Office Hours Instance Scheduler Container Registry"
+Description: "Core Layer 003: Serverless Office Hours Instance Scheduler Container Registry"
 
 Resources:
   InstanceSchedulerRepository:
@@ -39,7 +39,7 @@ Resources:
         - Key: Platform
           Value: "core"
         - Key: Layer
-          Value: "002-container-registry-000-serverless-office-hours-instance-scheduler"
+          Value: "003-container-registry-000-serverless-office-hours-instance-scheduler"
 
 Outputs:
   InstanceSchedulerRepositoryArn:
