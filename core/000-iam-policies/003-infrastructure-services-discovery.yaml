@@ -6,7 +6,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       ManagedPolicyName: "core-InfrastructureServicesDiscovery"
-      Description: "Allows read-only access to CloudFormation, CodeBuild, CloudWatch"
+      Description: "Allows read-only access to CloudFormation, CodeBuild, CloudWatch, ECR, EventBridge"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -24,6 +24,8 @@ Resources:
               - "ecr:Batch*"
               - "ecr:Get*"
               - "ecr:Validate*"
+              - "scheduler:Get*"
+              - "scheduler:List*"
             Resource: "*"
 
 Outputs:
