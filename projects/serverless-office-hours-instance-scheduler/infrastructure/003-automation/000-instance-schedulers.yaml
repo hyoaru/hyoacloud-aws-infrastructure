@@ -33,7 +33,7 @@ Resources:
     Properties:
       Name: !Sub "${Environment}-instance-office-hour-stop"
       Description: !Sub "Stops ${Environment} instances at 9 AM PHT, Mon-Fri"
-      ScheduleExpression: "cron(0 9 ? * MON-FRI *)"
+      ScheduleExpression: "cron(0 18 ? * MON-FRI *)"
       ScheduleExpressionTimezone: "Asia/Manila"
       State: "ENABLED"
       FlexibleTimeWindow:
