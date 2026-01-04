@@ -10,11 +10,38 @@ Before deploying any layers, ensure your environment is configured:
 
 - Permissions: Your IAM Identity must have AdministratorAccess policy temporarily.
 
+## Projects
+
+This repository hosts diverse application patterns that demonstrate the flexibility of this model.
+
+### 1. Two-Tier Web Architecture
+
+A classic high-availability web pattern designed for fault tolerance and scalability.
+
+![](./projects/two-tier/resources/diagram.drawio.png)
+
+- **Architecture**: An Application Load Balancer (ALB) in the Space public subnets routing traffic to an Auto Scaling Group (ASG) in the private subnets.
+- **State Management**: Uses a Launch Template to bootstrap EC2 instances with a Python 3 web server.
+- **Layer Integration**: Imports VPC and Subnet IDs from the Space layer and Security Group rules from the Project layer.
+- **Path**: `projects/two-tier/`
+
+### 2. Serverless Office Hours Instance Scheduler
+
+An event-driven cost-optimization tool tailored for teams in the Philippine Timezone (PHT).
+
+![](./projects/serverless-office-hours-instance-scheduler/resources/diagram.drawio.png)
+
+- **Architecture**: EventBridge Scheduler triggers a containerized Lambda function to START and STOP environments.
+- **Logic**: Natively supports Asia/Manila time to ensure instances are only running during 09:00 - 18:00 PHT.
+- **Registry**: Pulls Docker images from a centralized Core Layer ECR repository.
+- **Codebase**: The application logic (Python/Docker) is maintained in the [serverless-office-hours-instance-scheduler](https://github.com/hyoaru/serverless-office-hours-instance-scheduler) repository.
+- **Path**: `projects/serverless-office-hours-instance-scheduler/`
+
 ## Repository Structure
 
 ```
 .
-├── core/    # ADMIN: Global Identity & Discovery Policies
+├── core/    # ADMIN: Global Foundational Resources
 ├── spaces/    # OPERATOR: Shared Regional Infrastructure (VPC, NAT)
 │   ├── infrastructure/    # Multi-AZ Networking & Shared IAM Roles
 │   └── parameters/    # Configs for dev, stage, and prod spaces
