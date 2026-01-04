@@ -2,6 +2,8 @@
 
 A serverless solution to automatically START and STOP EC2 instances based on a schedule. This project is specifically optimized for teams working in the Philippine Timezone (PHT) to reduce AWS costs by shutting down development environments outside of office hours.
 
+Lambda App: https://github.com/hyoaru/serverless-office-hours-instance-scheduler
+
 ## Architecture
 
 This project uses a layered CloudFormation approach to deploy a containerized
