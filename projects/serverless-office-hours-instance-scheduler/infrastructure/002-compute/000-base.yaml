@@ -17,12 +17,15 @@ Resources:
       FunctionName: !Sub "${Environment}-devops-instance-scheduler"
       Role: !ImportValue
         Fn::Sub: "${Environment}-instance-scheduler-LambdaExecutionRole-arn"
-      PackageType: Image
       Code:
         ImageUri: !Sub
           - "${RepositoryUri}:${ImageTag}"
           - RepositoryUri: !ImportValue "core-InstanceSchedulerRepository-uri"
             ImageTag: latest
+      Environment:
+        Variables:
+          ENVIRONMENT: !Sub "${Environment}"
+      PackageType: Image
       MemorySize: 128
       Timeout: 30
       EphemeralStorage:
