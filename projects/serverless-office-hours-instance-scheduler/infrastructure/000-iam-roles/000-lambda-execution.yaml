@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Serverless Office Hours Instance Scheduler Layer 000: Base IAM Roles"
+Description: "Serverless Office Hours Instance Scheduler Layer 000: Lambda Execution Role"
 
 Parameters:
   Environment:
@@ -15,7 +15,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${Environment}-instance-scheduler-LambdaExecutionRole"
-      Description: !Sub "Execution role for ${Environment}-${Project}."
+      Description: !Sub "Execution role for ${Environment}-${Project} lambda."
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -53,7 +53,7 @@ Resources:
         - Key: Platform
           Value: !Sub "${Project}"
         - Key: Layer
-          Value: "000-iam-roles-000-base"
+          Value: "000-iam-roles-000-lambda-execution"
 
 Outputs:
   LambdaExecutionRoleArn:

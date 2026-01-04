@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Serverless Office Hours Instance Scheduler Layer 000: Event Bridge Lambda Execution Role"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  Project:
+    Type: String
+    Description: "The project name to prefix resource names."
+
+Resources:
+  EventBridgeLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-instance-scheduler-EventBridgeLambdaExecutionRole"
+      Description: !Sub "Execution role for ${Environment}-${Project} event bridge."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "scheduler.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: ScopedResourceManagement
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: InvokeLambdaFunction
+                Effect: Allow
+                Action: "lambda:InvokeFunction"
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    "aws:ResourceTag/Environment": !Ref Environment
+      Tags:
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: !Sub "${Project}"
+        - Key: Layer
+          Value: "000-iam-roles-001-event-bridge-execution"
+
+Outputs:
+  EventBridgeLambdaExecutionRoleArn:
+    Description: "ARN of the EventBridgeLambdaExecutionRole"
+    Value: !GetAtt EventBridgeLambdaExecutionRole.Arn
+    Export:
+      Name: !Sub "${Environment}-instance-scheduler-EventBridgeLambdaExecutionRole-arn"
+  EventBridgeLambdaExecutionRoleId:
+    Description: "ID of the EventBridgeLambdaExecutionRole"
+    Value: !GetAtt EventBridgeLambdaExecutionRole.RoleId
+    Export:
+      Name: !Sub "${Environment}-instance-scheduler-EventBridgeLambdaExecutionRole-id"
