@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Serverless Office Hours Instance Scheduler Layer 003: Instance Schedulers"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  OfficeHourStartSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: !Sub "${Environment}-instance-office-hour-start"
+      Description: !Sub "Starts ${Environment} instances at 9 AM PHT, Mon-Fri"
+      ScheduleExpression: "cron(0 9 ? * MON-FRI *)"
+      ScheduleExpressionTimezone: "Asia/Manila"
+      State: "ENABLED"
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      Target:
+        Arn: !ImportValue
+          Fn::Sub: "${Environment}-instance-scheduler-Function-arn"
+        RoleArn: !ImportValue
+          Fn::Sub: "${Environment}-instance-scheduler-EventBridgeLambdaExecutionRole-arn"
+        Input: |
+          {
+            "action": "START"
+          }
+
+  OfficeHourStopSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: !Sub "${Environment}-instance-office-hour-stop"
+      Description: !Sub "Stops ${Environment} instances at 9 AM PHT, Mon-Fri"
+      ScheduleExpression: "cron(0 9 ? * MON-FRI *)"
+      ScheduleExpressionTimezone: "Asia/Manila"
+      State: "ENABLED"
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      Target:
+        Arn: !ImportValue
+          Fn::Sub: "${Environment}-instance-scheduler-Function-arn"
+        RoleArn: !ImportValue
+          Fn::Sub: "${Environment}-instance-scheduler-EventBridgeLambdaExecutionRole-arn"
+        Input: |
+          {
+            "action": "STOP"
+          }
+
+Outputs:
+  OfficeHourStartScheduleArn:
+    Description: "ARN of the Function"
+    Value: !GetAtt OfficeHourStartSchedule.Arn
+    Export:
+      Name: !Sub "${Environment}-instance-scheduler-OfficeHourStartSchedule-arn"
+  OfficeHourStopScheduleArn:
+    Description: "ARN of the Function"
+    Value: !GetAtt OfficeHourStopSchedule.Arn
+    Export:
+      Name: !Sub "${Environment}-instance-scheduler-OfficeHourStopSchedule-arn"
