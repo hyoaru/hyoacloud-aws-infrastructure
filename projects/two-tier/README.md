@@ -6,7 +6,7 @@ This repository contains the **Project Layer** infrastructure for a highly avail
 
 The project implements a classic web architecture spanning multiple Availability Zones for fault tolerance.
 
-![](./resources/two-tier.drawio.png)
+![](./resources/diagram.drawio.png)
 
 ### Component Ownership
 
