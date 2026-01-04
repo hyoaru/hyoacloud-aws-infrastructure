@@ -137,7 +137,6 @@ Resources:
             Effect: "Allow"
             Action:
               - "lambda:Create*"
-              - "lambda:Delete*"
               - "lambda:Invoke*"
               - "lambda:Publish*"
               - "lambda:Put*"
@@ -152,6 +151,11 @@ Resources:
             Condition:
               StringEquals:
                 "aws:ResourceTag/Environment": !Ref Environment
+          - Sid: "LambdaManagementScopedByPrefix"
+            Effect: "Allow"
+            Action:
+              - "lambda:Delete*"
+            Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${Environment}-*"
 
 Outputs:
   ComputeServicesManagementPolicyArn:
