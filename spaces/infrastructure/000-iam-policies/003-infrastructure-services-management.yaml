@@ -41,6 +41,21 @@ Resources:
               - "ecr:Complete*"
               - "ecr:Put*"
             Resource: "*"
+          # EventBridge
+          - Sid: "EventBridgeManagementBase"
+            Effect: Allow
+            Action:
+              - "scheduler:Tag*"
+            Resource: "*"
+          - Sid: "EventBridgeManagementScoped"
+            Effect: Allow
+            Action:
+              - "scheduler:Untag*"
+              - "scheduler:Create*"
+              - "scheduler:Delete*"
+              - "scheduler:Update*"
+            Resource:
+              - !Sub "arn:aws:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/*/${Environment}-*"
 
 Outputs:
   InfrastructureServicesManagementPolicyArn:
