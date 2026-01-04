@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Serverless Instance Scheduler Layer 002: Compute"
+Description: "Serverless Office Hours Instance Scheduler Layer 002: Compute"
 
 Parameters:
   Environment:
@@ -11,29 +11,25 @@ Parameters:
     Description: "The project name to prefix resource names."
 
 Resources:
-  Function:
+  LambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${Environment}-devops-ec2-instance-scheduler"
-      Code: !Sub "./projects/${Project}/functions/000-base/"
-      Runtime: python3.14
+      FunctionName: !Sub "${Environment}-devops-instance-scheduler"
+      Role: !ImportValue
+        Fn::Sub: "${Environment}-instance-scheduler-LambdaExecutionRole-arn"
+      PackageType: Image
+      Code:
+        ImageUri: !Sub
+          - "${RepositoryUri}:${ImageTag}"
+          - RepositoryUri: !ImportValue "core-InstanceSchedulerRepository-uri"
+            ImageTag: latest
       MemorySize: 128
-      Timeout: 3
-      Handler: main.main
+      Timeout: 30
       EphemeralStorage:
         Size: 512
-      EventInvokeConfig:
-        MaximumEventAgeInSeconds: 21600
-        MaximumRetryAttempts: 2
-      Role: !ImportValue
-        Fn::Sub: "${Environment}-LambdaExecutionRole-arn"
       Architectures:
         - x86_64
       RecursiveLoop: Terminate
-      SnapStart:
-        ApplyOn: None
-      RuntimeManagementConfig:
-        UpdateRuntimeOn: Auto
       Tags:
         - Key: Environment
           Value: !Sub "${Environment}"
@@ -45,8 +41,8 @@ Resources:
           Value: "002-compute-000-base"
 
 Outputs:
-  FunctionArn:
+  LambdaFunctionArn:
     Description: "ARN of the Function"
-    Value: !GetAtt Function.Arn
+    Value: !GetAtt LambdaFunction.Arn
     Export:
-      Name: !Sub "${Environment}-${Project}-Function-arn"
+      Name: !Sub "${Environment}-instance-scheduler-Function-arn"
