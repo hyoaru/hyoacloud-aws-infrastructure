@@ -32,3 +32,8 @@ Outputs:
     Value: !GetAtt LogGroup.Arn
     Export:
       Name: !Sub "${Environment}-instance-scheduler-LogGroup-arn"
+  LogGroupName:
+    Description: "Name of the LogGroup"
+    Value: !Ref LogGroup
+    Export:
+      Name: !Sub "${Environment}-instance-scheduler-LogGroup-name"
