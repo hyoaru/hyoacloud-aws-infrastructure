@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Serverless Office Hours Instance Scheduler Layer 000: Base IAM Roles"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  Project:
+    Type: String
+    Description: "The project name to prefix resource names."
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-instance-scheduler-LambdaExecutionRole"
+      Description: !Sub "Execution role for ${Environment}-${Project}."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: ScopedResourceManagement
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowDescribeInstances
+                Effect: Allow
+                Action:
+                  - "ec2:DescribeInstances"
+                Resource: "*"
+              - Sid: AllowStartStopTaggedInstances
+                Effect: Allow
+                Action:
+                  - "ec2:StartInstances"
+                  - "ec2:StopInstances"
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    "aws:ResourceTag/Environment": !Ref Environment
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+      Tags:
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: !Sub "${Project}"
+        - Key: Layer
+          Value: "000-iam-roles-000-base"
+
+Outputs:
+  LambdaExecutionRoleArn:
+    Description: "ARN of the LambdaExecutionRole"
+    Value: !GetAtt LambdaExecutionRole.Arn
+    Export:
+      Name: !Sub "${Environment}-instance-scheduler-LambdaExecutionRole-arn"
+  LambdaExecutionRoleId:
+    Description: "ID of the LambdaExecutionRole"
+    Value: !GetAtt LambdaExecutionRole.RoleId
+    Export:
+      Name: !Sub "${Environment}-instance-scheduler-LambdaExecutionRole-id"
