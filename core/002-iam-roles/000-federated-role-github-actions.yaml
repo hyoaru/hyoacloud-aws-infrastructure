@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer 002: Github Actions Federated Role"
+
+Resources:
+  GithubActionsFederatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "core-AWSFederatedRoleForGithubActions"
+      Description: "Identity-provider-based role allowing GitHub Actions to authenticate via OIDC."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+              StringLike:
+                "token.actions.githubusercontent.com:sub": "repo:hyoaru/*"
+      Policies:
+        - PolicyName: ScopedResourceManagement
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ECRLogin
+                Effect: Allow
+                Action:
+                  - "ecr:GetAuthorizationToken"
+                Resource: "*"
+              - Sid: PushToRepo
+                Effect: Allow
+                Action:
+                  - "ecr:BatchCheckLayerAvailability"
+                  - "ecr:InitiateLayerUpload"
+                  - "ecr:UploadLayerPart"
+                  - "ecr:CompleteLayerUpload"
+                  - "ecr:PutImage"
+                Resource: "*"
+      Tags:
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "core"
+        - Key: Layer
+          Value: "002-iam-roles-000-federated-role-github-actions"
+
+Outputs:
+  GithubActionsFederatedRoleArn:
+    Description: "ARN of the GithubActionsFederatedRole"
+    Value: !GetAtt GithubActionsFederatedRole.Arn
+    Export:
+      Name: "core-GithubActionsFederatedRole-arn"
+  GithubActionsFederatedRoleId:
+    Description: "ID of the GithubActionsFederatedRole"
+    Value: !GetAtt GithubActionsFederatedRole.RoleId
+    Export:
+      Name: "core-GithubActionsFederatedRole-id"
