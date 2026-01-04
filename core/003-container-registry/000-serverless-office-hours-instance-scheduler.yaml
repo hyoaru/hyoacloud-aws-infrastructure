@@ -6,6 +6,16 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       RepositoryName: "serverless-office-hours-instance-scheduler"
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: LambdaECRImageRetrievalPolicy
+            Effect: Allow
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action:
+              - "ecr:BatchGetImage"
+              - "ecr:GetDownloadUrlForLayer"
       LifecyclePolicy:
         LifecyclePolicyText: |
           {
