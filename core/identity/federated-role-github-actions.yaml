@@ -54,7 +54,7 @@ Resources:
         - Key: Platform
           Value: "core"
         - Key: Layer
-          Value: "federated-role-github-actions"
+          Value: "identity-federated-role-github-actions"
 
   # Parameter Store Exports
   GithubActionsFederatedRoleArnParameter:
