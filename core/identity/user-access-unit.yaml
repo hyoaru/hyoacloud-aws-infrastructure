@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Core Layer: User Self Management Policies"
+Description: "Core Layer: User Access Consolidated"
 
 Resources:
   AccountUserCredentialsSelfDiscoveryPolicy:
@@ -41,13 +41,20 @@ Resources:
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
               - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
+  UsersGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: "core-Users"
+      ManagedPolicyArns:
+        - !GetAtt "AccountUserCredentialsSelfDiscoveryPolicy.PolicyArn"
+        - !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
 
   # Parameter Store Exports
   AccountUserCredentialsSelfDiscoveryPolicyArnParameter:
     Type: AWS::SSM::Parameter
     DeletionPolicy: Retain
     Properties:
-      Name: "/infrastructure/core/iam/policies/account-user-credentials-self-discovery-arn"
+      Name: "/infrastructure/core/identity/account-user-credentials-self-discovery-policy-arn"
       Description: "ARN for the AccountUserCredentialsDiscoveryPolicy"
       Type: "String"
       Value: !GetAtt "AccountUserCredentialsSelfDiscoveryPolicy.PolicyArn"
@@ -55,7 +62,14 @@ Resources:
     Type: AWS::SSM::Parameter
     DeletionPolicy: Retain
     Properties:
-      Name: "/infrastructure/core/iam/policies/iam-user-mfa-self-management-arn"
+      Name: "/infrastructure/core/identity/iam-user-mfa-self-management-policy-arn"
       Description: "ARN for the IamUserMfaSelfManagementPolicy"
       Type: "String"
       Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
+  UsersGroupArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/infrastructure/core/identity/users-group-arn"
+      Description: "ARN for the UsersGroup"
+      Type: "String"
+      Value: !GetAtt "UsersGroup.Arn"
