@@ -2,7 +2,7 @@
 set -e
 
 # Usage: ./scripts/deploy-core.sh [group] [layer]
-# Example: ./scripts/deploy-core.sh identity user-self-management-policies
+# Example: ./scripts/deploy-core.sh identity administrator-entitlements
 
 GROUP=$1
 LAYER=$2
@@ -11,7 +11,7 @@ REGION="ap-southeast-1"
 # Input validation
 if [[ -z "${GROUP}" || -z "${LAYER}" ]]; then
   echo "Usage: ./scripts/deploy-core.sh [group] [layer]"
-  echo "Example: ./scripts/deploy-core.sh identity user-self-management-policies"
+  echo "Example: ./scripts/deploy-core.sh identity administrator-entitlements"
   exit 1
 fi
 
