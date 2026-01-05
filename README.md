@@ -14,7 +14,7 @@ Before deploying any layers, ensure your environment is configured:
 
 This repository hosts diverse application patterns that demonstrate the flexibility of this model.
 
-### 1. Two-Tier Web Architecture
+### [1. Two-Tier Web Architecture](./projects/two-tier/README.md)
 
 A classic high-availability web pattern designed for fault tolerance and scalability.
 
@@ -25,7 +25,7 @@ A classic high-availability web pattern designed for fault tolerance and scalabi
 - **Layer Integration**: Imports VPC and Subnet IDs from the Space layer and Security Group rules from the Project layer.
 - **Path**: `projects/two-tier/`
 
-### 2. Serverless Office Hours Instance Scheduler
+### [2. Serverless Office Hours Instance Scheduler](./projects/serverless-office-hours-instance-scheduler/README.md)
 
 An event-driven cost-optimization tool tailored for teams in the Philippine Timezone (PHT).
 
