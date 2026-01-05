@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Core Layer: User Self Management Policy"
+Description: "Core Layer: User Self Management Policies"
 
 Resources:
   AccountUserCredentialsSelfDiscoveryPolicy:
