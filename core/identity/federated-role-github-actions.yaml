@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer: Github Actions Federated Role"
+
+Parameters:
+  GithubOidcProviderArn:
+    Type: "AWS::SSM::Parameter::Value<String>"
+    Default: "/infrastructure/core/identity/github-oidc-provider-arn"
+  GithubOrganization:
+    Type: String
+    Default: hyoaru
+
+Resources:
+  GithubActionsFederatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "core-GithubActionsFederatedRole"
+      Description: "Identity-provider-based role allowing GitHub Actions to authenticate via OIDC."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref GithubOidcProviderArn
+            Action: "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+              StringLike:
+                "token.actions.githubusercontent.com:sub": !Sub "repo:${GithubOrganization}/*"
+      Policies:
+        - PolicyName: ScopedResourceManagement
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ECRLogin
+                Effect: Allow
+                Action:
+                  - "ecr:GetAuthorizationToken"
+                Resource: "*"
+              - Sid: PushToRepo
+                Effect: Allow
+                Action:
+                  - "ecr:BatchCheckLayerAvailability"
+                  - "ecr:InitiateLayerUpload"
+                  - "ecr:UploadLayerPart"
+                  - "ecr:CompleteLayerUpload"
+                  - "ecr:PutImage"
+                  - "lambda:GetFunction*"
+                  - "lambda:UpdateFunction*"
+                Resource: "*"
+      Tags:
+        - Key: Owner
+          Value: "DevOps"
+        - Key: Platform
+          Value: "core"
+        - Key: Layer
+          Value: "federated-role-github-actions"
+
+  # Parameter Store Exports
+  GithubActionsFederatedRoleArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/infrastructure/core/identity/github-actions-federated-role-arn"
+      Description: "ARN for the GithubActionsFederatedRole"
+      Type: "String"
+      Value: !GetAtt "GithubActionsFederatedRole.Arn"

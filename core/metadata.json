@@ -1,4 +1,9 @@
 {
   "layer": "core",
-  "order": ["identity/access-unit-administrator", "identity/access-unit-user"]
+  "order": [
+    "identity/access-unit-administrator",
+    "identity/access-unit-user",
+    "identity/oidc-provider-github",
+    "identity/federated-role-github-actions"
+  ]
 }

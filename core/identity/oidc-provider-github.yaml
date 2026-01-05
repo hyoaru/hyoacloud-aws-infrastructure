@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer: Github Actions Federated Role"
+
+Resources:
+  GithubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: "https://token.actions.githubusercontent.com"
+      ClientIdList:
+        - "sts.amazonaws.com"
+      ThumbprintList:
+        - "2b18947a6a9fc7764fd8b5fb18a863b0c6dac24f"
+
+  # Parameter Store Exports
+  GithubOidcProviderArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/infrastructure/core/identity/github-oidc-provider-arn"
+      Description: "ARN for the GithubOidcProvider"
+      Type: "String"
+      Value: !GetAtt "GithubOidcProvider.Arn"
