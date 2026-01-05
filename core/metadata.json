@@ -1,7 +1,4 @@
 {
   "layer": "core",
-  "order": [
-    "identity/administrator-access-unit",
-    "identity/user-self-management-policies"
-  ]
+  "order": ["identity/access-unit-administrator", "identity/access-unit-user"]
 }
