@@ -52,7 +52,6 @@ Resources:
   # Parameter Store Exports
   AccountUserCredentialsSelfDiscoveryPolicyArnParameter:
     Type: AWS::SSM::Parameter
-    DeletionPolicy: Retain
     Properties:
       Name: "/iac/core/identity/account-user-credentials-self-discovery-policy-arn"
       Description: "ARN for the AccountUserCredentialsDiscoveryPolicy"
@@ -60,7 +59,6 @@ Resources:
       Value: !GetAtt "AccountUserCredentialsSelfDiscoveryPolicy.PolicyArn"
   IamUserMfaSelfManagementPolicyArnParameter:
     Type: AWS::SSM::Parameter
-    DeletionPolicy: Retain
     Properties:
       Name: "/iac/core/identity/iam-user-mfa-self-management-policy-arn"
       Description: "ARN for the IamUserMfaSelfManagementPolicy"
