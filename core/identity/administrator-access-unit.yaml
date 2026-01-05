@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer: Administrator Access Consolidated"
+
+Resources:
+  AdministratorHumanRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "core-Administrator"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Condition:
+              Bool:
+                "aws:MultiFactorAuthPresent": "true"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
+  AssumeAdministratorHumanRolePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-AssumeAdministratorHumanRole"
+      Description: "Allows users to assume the Administrator role."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Resource: !GetAtt AdministratorHumanRole.Arn
+  AdministratorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: "core-Administrators"
+      ManagedPolicyArns:
+        - !GetAtt AssumeAdministratorHumanRolePolicy.PolicyArn
+
+  # Parameter Store Exports
+  AdministratorHumanRoleArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/infrastructure/core/identity/administrator-human-role-arn"
+      Description: "ARN for the AdministratorHumanRole"
+      Type: "String"
+      Value: !GetAtt "AdministratorHumanRole.Arn"
+  AssumeAdministratorHumanRolePolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/infrastructure/core/identity/assume-administrator-human-role-policy-arn"
+      Description: "ARN for the AssumeAdministratorHumanRolePolicy"
+      Type: "String"
+      Value: !GetAtt "AssumeAdministratorHumanRolePolicy.PolicyArn"
+  AdministratorsGroupArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/infrastructure/core/identity/administrators-group-arn"
+      Description: "ARN for the AdministratorsGroup"
+      Type: "String"
+      Value: !GetAtt "AdministratorsGroup.Arn"
