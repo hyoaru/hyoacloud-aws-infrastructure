@@ -2,9 +2,12 @@
   "tier": "core",
   "order": [
     { "group": "identity", "layer": "access-unit-administrator" },
-    { "group": "identity", "layer": "access-unit-administrator" },
     { "group": "identity", "layer": "access-unit-user" },
     { "group": "identity", "layer": "oidc-provider-github" },
-    { "group": "identity", "layer": "federated-role-github-actions" }
+    { "group": "identity", "layer": "federated-role-github-actions" },
+    {
+      "group": "infrastructure",
+      "layer": "ecr-repository-serverless-office-hours-instance-scheduler"
+    }
   ]
 }
