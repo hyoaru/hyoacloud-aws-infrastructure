@@ -15,7 +15,7 @@ Resources:
   GithubOidcProviderArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: "/infrastructure/core/identity/github-oidc-provider-arn"
+      Name: "/iac/core/identity/github-oidc-provider-arn"
       Description: "ARN for the GithubOidcProvider"
       Type: "String"
       Value: !GetAtt "GithubOidcProvider.Arn"

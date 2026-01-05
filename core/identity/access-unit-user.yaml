@@ -54,7 +54,7 @@ Resources:
     Type: AWS::SSM::Parameter
     DeletionPolicy: Retain
     Properties:
-      Name: "/infrastructure/core/identity/account-user-credentials-self-discovery-policy-arn"
+      Name: "/iac/core/identity/account-user-credentials-self-discovery-policy-arn"
       Description: "ARN for the AccountUserCredentialsDiscoveryPolicy"
       Type: "String"
       Value: !GetAtt "AccountUserCredentialsSelfDiscoveryPolicy.PolicyArn"
@@ -62,14 +62,14 @@ Resources:
     Type: AWS::SSM::Parameter
     DeletionPolicy: Retain
     Properties:
-      Name: "/infrastructure/core/identity/iam-user-mfa-self-management-policy-arn"
+      Name: "/iac/core/identity/iam-user-mfa-self-management-policy-arn"
       Description: "ARN for the IamUserMfaSelfManagementPolicy"
       Type: "String"
       Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
   UsersGroupArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: "/infrastructure/core/identity/users-group-arn"
+      Name: "/iac/core/identity/users-group-arn"
       Description: "ARN for the UsersGroup"
       Type: "String"
       Value: !GetAtt "UsersGroup.Arn"

@@ -39,21 +39,21 @@ Resources:
   AdministratorHumanRoleArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: "/infrastructure/core/identity/administrator-human-role-arn"
+      Name: "/iac/core/identity/administrator-human-role-arn"
       Description: "ARN for the AdministratorHumanRole"
       Type: "String"
       Value: !GetAtt "AdministratorHumanRole.Arn"
   AssumeAdministratorHumanRolePolicyArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: "/infrastructure/core/identity/assume-administrator-human-role-policy-arn"
+      Name: "/iac/core/identity/assume-administrator-human-role-policy-arn"
       Description: "ARN for the AssumeAdministratorHumanRolePolicy"
       Type: "String"
       Value: !GetAtt "AssumeAdministratorHumanRolePolicy.PolicyArn"
   AdministratorsGroupArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: "/infrastructure/core/identity/administrators-group-arn"
+      Name: "/iac/core/identity/administrators-group-arn"
       Description: "ARN for the AdministratorsGroup"
       Type: "String"
       Value: !GetAtt "AdministratorsGroup.Arn"

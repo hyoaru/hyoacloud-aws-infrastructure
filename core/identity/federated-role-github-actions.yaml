@@ -4,7 +4,7 @@ Description: "Core Layer: Github Actions Federated Role"
 Parameters:
   GithubOidcProviderArn:
     Type: "AWS::SSM::Parameter::Value<String>"
-    Default: "/infrastructure/core/identity/github-oidc-provider-arn"
+    Default: "/iac/core/identity/github-oidc-provider-arn"
   GithubOrganization:
     Type: String
     Default: hyoaru
@@ -60,7 +60,7 @@ Resources:
   GithubActionsFederatedRoleArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: "/infrastructure/core/identity/github-actions-federated-role-arn"
+      Name: "/iac/core/identity/github-actions-federated-role-arn"
       Description: "ARN for the GithubActionsFederatedRole"
       Type: "String"
       Value: !GetAtt "GithubActionsFederatedRole.Arn"
