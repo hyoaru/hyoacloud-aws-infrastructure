@@ -1,14 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "Core Layer: Github Actions Federated Role"
 
-Parameters:
-  GithubOidcProviderArn:
-    Type: "AWS::SSM::Parameter::Value<String>"
-    Default: "/iac/core/identity/github-oidc-provider-arn"
-  GithubOrganization:
-    Type: String
-    Default: hyoaru
-
 Resources:
   GithubActionsFederatedRole:
     Type: AWS::IAM::Role
@@ -20,13 +12,13 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !Ref GithubOidcProviderArn
+              Federated: "{{resolve:ssm:/iac/core/identity/github-oidc-provider-arn}}"
             Action: "sts:AssumeRoleWithWebIdentity"
             Condition:
               StringEquals:
                 "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
               StringLike:
-                "token.actions.githubusercontent.com:sub": !Sub "repo:${GithubOrganization}/*"
+                "token.actions.githubusercontent.com:sub": "repo:hyoaru/*"
       Policies:
         - PolicyName: ScopedResourceManagement
           PolicyDocument:
