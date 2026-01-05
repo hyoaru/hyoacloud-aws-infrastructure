@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer: User Self Management Policy"
+
+Resources:
+  AccountUserCredentialsSelfDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-AccountUserCredentialsSelfDiscovery"
+      Description: "Allows users to read their own account metadata."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "DiscoveryScoped"
+            Effect: Allow
+            Action:
+              - "account:GetAccountInformation"
+            Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
+  IamUserMfaSelfManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: "core-IAMUserMFASelfManagement"
+      Description: "Allows users to manage their own MFA devices."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "DiscoveryScoped"
+            Effect: Allow
+            Action:
+              - "iam:ListMFADevices"
+              - "iam:ListVirtualMFADevices"
+
+            Resource: "*"
+          - Sid: "ManagementScoped"
+            Effect: Allow
+            Action:
+              - "iam:CreateVirtualMFADevice"
+              - "iam:EnableMFADevice"
+              - "iam:ResyncMFADevice"
+              - "iam:DeactivateMFADevice"
+              - "iam:DeleteVirtualMFADevice"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
+
+  # Parameter Store Exports
+  AccountUserCredentialsSelfDiscoveryPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    DeletionPolicy: Retain
+    Properties:
+      Name: "/infrastructure/core/iam/policies/account-user-credentials-self-discovery-arn"
+      Description: "ARN for the AccountUserCredentialsDiscoveryPolicy"
+      Type: "String"
+      Value: !GetAtt "AccountUserCredentialsSelfDiscoveryPolicy.PolicyArn"
+  IamUserMfaSelfManagementPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    DeletionPolicy: Retain
+    Properties:
+      Name: "/infrastructure/core/iam/policies/iam-user-mfa-self-management-arn"
+      Description: "ARN for the IamUserMfaSelfManagementPolicy"
+      Type: "String"
+      Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"

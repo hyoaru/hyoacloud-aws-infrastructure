@@ -1,0 +1,4 @@
+{
+  "layer": "core",
+  "order": ["identity/user-self-management-policies"]
+}
