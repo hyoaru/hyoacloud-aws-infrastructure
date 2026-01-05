@@ -3,6 +3,7 @@ from pathlib import Path
 
 from rich import box
 from rich.console import Console
+from rich.markup import escape
 from rich.table import Table
 
 from cli.services.stack_lifecycle_manager.strategies.interface import StackLifecycleStrategyABC
@@ -48,4 +49,4 @@ class DestroyCoreStackLifecycleStrategy(StackLifecycleStrategyABC):
 
         except subprocess.CalledProcessError as e:
             console.print(f"[bold]Failed[/bold] [red]✗[/red] [dim]| {self.stack} deletion crashed[/dim]")
-            console.print(f"[dim]{e.stderr.strip()}[/dim]\n")
+            console.print(f"[dim]{escape(e.stderr.strip())}[/dim]\n")
