@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Cloud Services Discovery Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  CloudServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-CloudServicesDiscovery"
+      Description: !Sub "Allows ${Environment} read only access to specified cloud services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "IAMDiscoveryScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:get"
+            Resource: "*"
+
+  # Parameter Store Exports
+  CloudServicesDiscoveryPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-cloud-services-discovery-policy-arn"
+      Description: "ARN for the CloudServicesDiscoveryPolicy"
+      Type: "String"
+      Value: !GetAtt "CloudServicesDiscoveryPolicy.PolicyArn"
