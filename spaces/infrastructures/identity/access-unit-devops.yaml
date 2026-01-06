@@ -23,6 +23,7 @@ Resources:
                 "aws:MultiFactorAuthPresent": "true"
       ManagedPolicyArns:
         - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-cloud-services-discovery-policy-arn}}"
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-cloud-services-management-policy-arn}}"
   AssumeDevOpsEngineerHumanRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:

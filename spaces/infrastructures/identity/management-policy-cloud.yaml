@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Cloud Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  CloudServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-CloudServicesManagement"
+      Description: !Sub "Allows ${Environment} read only access to specified cloud services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "IAMManagementBase"
+            Effect: "Allow"
+            Action:
+            Resource: "*"
+          - Sid: "IAMManagementScoped"
+            Effect: "Allow"
+            Action:
+              - "iam:CreateGroup"
+              - "iam:DeleteGroup"
+              - "iam:AddUserToGroup"
+              - "iam:RemoveUserFromGroup"
+              - "iam:AttachGroupPolicy"
+              - "iam:DetachGroupPolicy"
+              - "iam:CreateRole"
+              - "iam:DeleteRole"
+              - "iam:AttachRolePolicy"
+              - "iam:DetachRolePolicy"
+              - "iam:TagRole"
+              - "iam:UntagRole"
+              - "iam:CreatePolicy"
+              - "iam:DeletePolicy"
+              - "iam:TagPolicy"
+              - "iam:UntagPolicy"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+
+  # Parameter Store Exports
+  CloudServicesManagementPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-cloud-services-management-policy-arn"
+      Description: "ARN for the CloudServicesManagementPolicy"
+      Type: "String"
+      Value: !GetAtt "CloudServicesManagementPolicy.PolicyArn"
