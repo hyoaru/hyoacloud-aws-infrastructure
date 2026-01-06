@@ -32,6 +32,7 @@ class DeploySpaceStackLifecycleStrategy(StackLifecycleStrategyABC):
         with open(parameter_file, "r") as file:
             self.parameters = [f"{k}={v}" for k, v in json.load(file).items()]
 
+    @validate_call
     def execute(self):
         console.print(f"\n[bold]Deploying Space[/bold] [dim]→ {self.group}/{self.layer}[/dim]")
         table = Table(box=box.ASCII2, show_header=False, padding=(0, 2))

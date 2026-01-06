@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 
+from pydantic import validate_call
 from rich import box
 from rich.console import Console
 from rich.markup import escape
@@ -12,6 +13,7 @@ console = Console()
 
 
 class DeployCoreStackLifecycleStrategy(StackLifecycleStrategyABC):
+    @validate_call
     def __init__(self, region: str, template: Path):
         self.region = region
         self.group = template.parent.name
@@ -19,6 +21,7 @@ class DeployCoreStackLifecycleStrategy(StackLifecycleStrategyABC):
         self.stack = f"core-{self.group}-{self.layer}"
         self.template = template
 
+    @validate_call
     def execute(self):
         console.print(f"\n[bold]Deploying Core[/bold] [dim]→ {self.group}/{self.layer}[/dim]")
         table = Table(box=box.ASCII2, show_header=False, padding=(0, 2))
