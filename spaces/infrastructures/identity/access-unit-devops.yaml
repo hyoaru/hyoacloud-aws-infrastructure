@@ -24,6 +24,7 @@ Resources:
       ManagedPolicyArns:
         - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-identity-services-discovery-policy-arn}}"
         - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-identity-services-management-policy-arn}}"
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-cost-services-discovery-policy-arn}}"
   AssumeDevOpsEngineerHumanRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
