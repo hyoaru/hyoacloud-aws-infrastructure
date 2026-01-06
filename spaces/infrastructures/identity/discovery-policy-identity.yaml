@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Space Layer: Cloud Services Discovery Policy"
+Description: "Space Layer: Identity Services Discovery Policy"
 
 Parameters:
   Environment:
@@ -8,11 +8,11 @@ Parameters:
     AllowedValues: [dev, stage, prod]
 
 Resources:
-  CloudServicesDiscoveryPolicy:
+  IdentityServicesDiscoveryPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Sub "${Environment}-CloudServicesDiscovery"
-      Description: !Sub "Allows ${Environment} read only access to specified cloud services"
+      ManagedPolicyName: !Sub "${Environment}-IdentityServicesDiscovery"
+      Description: !Sub "Allows ${Environment} read only access to specified identity services"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -60,10 +60,10 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
 
   # Parameter Store Exports
-  CloudServicesDiscoveryPolicyArnParameter:
+  IdentityServicesDiscoveryPolicyArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub "/iac/space/identity/${Environment}-cloud-services-discovery-policy-arn"
-      Description: "ARN for the CloudServicesDiscoveryPolicy"
+      Name: !Sub "/iac/space/identity/${Environment}-identity-services-discovery-policy-arn"
+      Description: "ARN for the IdentityServicesDiscoveryPolicy"
       Type: "String"
-      Value: !GetAtt "CloudServicesDiscoveryPolicy.PolicyArn"
+      Value: !GetAtt "IdentityServicesDiscoveryPolicy.PolicyArn"

@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Space Layer: Cloud Services Management Policy"
+Description: "Space Layer: Identity Services Management Policy"
 
 Parameters:
   Environment:
@@ -8,18 +8,14 @@ Parameters:
     AllowedValues: [dev, stage, prod]
 
 Resources:
-  CloudServicesManagementPolicy:
+  IdentityServicesManagementPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: !Sub "${Environment}-CloudServicesManagement"
-      Description: !Sub "Allows ${Environment} read only access to specified cloud services"
+      ManagedPolicyName: !Sub "${Environment}-IdentityServicesManagement"
+      Description: !Sub "Allows ${Environment} read only access to specified identity services"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "IAMManagementBase"
-            Effect: "Allow"
-            Action:
-            Resource: "*"
           - Sid: "IAMManagementScoped"
             Effect: "Allow"
             Action:
@@ -45,10 +41,10 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
 
   # Parameter Store Exports
-  CloudServicesManagementPolicyArnParameter:
+  IdentityServicesManagementPolicyArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub "/iac/space/identity/${Environment}-cloud-services-management-policy-arn"
-      Description: "ARN for the CloudServicesManagementPolicy"
+      Name: !Sub "/iac/space/identity/${Environment}-identity-services-management-policy-arn"
+      Description: "ARN for the IdentityServicesManagementPolicy"
       Type: "String"
-      Value: !GetAtt "CloudServicesManagementPolicy.PolicyArn"
+      Value: !GetAtt "IdentityServicesManagementPolicy.PolicyArn"
