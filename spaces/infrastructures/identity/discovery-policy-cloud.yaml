@@ -16,11 +16,40 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
+          - Sid: "IAMDiscoveryBase"
+            Effect: "Allow"
+            Action:
+              - "iam:GetAccountSummary"
+              - "iam:ListAccountAliases"
+              - "iam:ListGroups"
+              - "iam:ListUsers"
+              - "iam:ListRoles"
+              - "iam:ListProviders"
+              - "iam:ListPolicies"
+              - "iam:ListOpenIDConnectProviders"
+              - "iam:GetAccountPasswordPolicy"
+              - "iam:ListGroupsForUser"
+              - "iam:GetUser"
+              - "iam:ListAccessKeys"
+              - "iam:GetLoginProfile"
+              - "iam:ListUserPolicies"
+              - "iam:ListMFADevices"
+              - "iam:GetAccessKeyLastUsed"
+              - "iam:ListAttachedUserPolicies"
+              - "iam:ListUserTags"
+              - "iam:GetOpenIDConnectProvider"
+            Resource: "*"
           - Sid: "IAMDiscoveryScoped"
             Effect: "Allow"
             Action:
-              - "iam:get"
-            Resource: "*"
+              - "iam:GetGroup"
+              - "iam:ListGroupPolicies"
+              - "iam:ListAttachedGroupPolicies"
+              - "iam:GenerateServiceLastAccessedDetails"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
 
   # Parameter Store Exports
   CloudServicesDiscoveryPolicyArnParameter:
