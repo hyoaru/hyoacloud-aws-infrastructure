@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Core Layer: User Access Consolidated"
+Description: "Core Layer: Self Identity Management Policies"
 
 Resources:
   AccountUserCredentialsSelfDiscoveryPolicy:
@@ -15,6 +15,8 @@ Resources:
             Action:
               - "account:GetAccountInformation"
             Resource: !Sub "arn:aws:account::${AWS::AccountId}:account"
+      Groups:
+        - !Sub "{{resolve:ssm:/iac/core/identity/users-group-name}}"
   IamUserMfaSelfManagementPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -41,13 +43,8 @@ Resources:
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:user/${!aws:username}"
               - !Sub "arn:aws:iam::${AWS::AccountId}:mfa/*"
-  UsersGroup:
-    Type: AWS::IAM::Group
-    Properties:
-      GroupName: "core-Users"
-      ManagedPolicyArns:
-        - !GetAtt "AccountUserCredentialsSelfDiscoveryPolicy.PolicyArn"
-        - !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
+      Groups:
+        - !Sub "{{resolve:ssm:/iac/core/identity/users-group-name}}"
 
   # Parameter Store Exports
   AccountUserCredentialsSelfDiscoveryPolicyArnParameter:
@@ -64,10 +61,3 @@ Resources:
       Description: "ARN for the IamUserMfaSelfManagementPolicy"
       Type: "String"
       Value: !GetAtt "IamUserMfaSelfManagementPolicy.PolicyArn"
-  UsersGroupArnParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: "/iac/core/identity/users-group-arn"
-      Description: "ARN for the UsersGroup"
-      Type: "String"
-      Value: !GetAtt "UsersGroup.Arn"

@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core Layer: User Group User"
+
+Resources:
+  UsersGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: "core-Users"
+
+  # Parameter Store Exports
+  UsersGroupArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/iac/core/identity/users-group-arn"
+      Description: "ARN for the UsersGroup"
+      Type: "String"
+      Value: !GetAtt "UsersGroup.Arn"
+  UsersGroupNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: "/iac/core/identity/users-group-name"
+      Description: "NAME for the UsersGroup"
+      Type: "String"
+      Value: !Ref "UsersGroup"
