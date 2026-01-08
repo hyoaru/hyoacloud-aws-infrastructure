@@ -35,12 +35,12 @@ def destroy_space(
 
     if target.lower() == "all":
         console.print(f"Destroying all space stacks in {settings.AWS_REGION}...")
-        space_tier_directory = project_root / "space"
+        space_tier_directory = project_root / "spaces"
         with open(space_tier_directory / "metadata.json", "r") as file:
             metadata = json.load(file)
 
-        for item in metadata["order"]:
-            template = space_tier_directory / item["group"] / f"{item['layer']}.yaml"
+        for item in metadata["order"][::-1]:
+            template = space_tier_directory / "infrastructures" / item["group"] / f"{item['layer']}.yaml"
             stack.execute(
                 strategy=DestroySpaceStackLifecycleStrategy(
                     region=settings.AWS_REGION,

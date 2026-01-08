@@ -1,3 +1,4 @@
+import json
 import subprocess
 from pathlib import Path
 from typing import Literal
@@ -25,7 +26,11 @@ class DestroySpaceStackLifecycleStrategy(StackLifecycleStrategyABC):
         self.group = template.parent.name
         self.layer = template.stem
         self.environment = environment
+        self.template = template
         self.stack = f"space-{self.environment}-{self.group}-{self.layer}"
+        parameter_file = template.parents[2] / "parameters" / self.environment / self.group / f"{self.layer}.json"
+        with open(parameter_file, "r") as file:
+            self.parameters = [f"{k}={v}" for k, v in json.load(file).items()]
 
     @validate_call
     def execute(self):

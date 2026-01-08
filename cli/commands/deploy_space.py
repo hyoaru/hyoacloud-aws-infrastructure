@@ -34,13 +34,13 @@ def deploy_space(
     project_root = settings.PROJECT_ROOT
 
     if target.lower() == "all":
-        console.print(f"Deploying all core templates in {settings.AWS_REGION}...")
-        core_tier_directory = project_root / "core"
-        with open(core_tier_directory / "metadata.json", "r") as file:
+        console.print(f"Deploying all space templates in {settings.AWS_REGION}...")
+        space_tier_directory = project_root / "spaces"
+        with open(space_tier_directory / "metadata.json", "r") as file:
             metadata = json.load(file)
 
         for item in metadata["order"]:
-            template = core_tier_directory / item["group"] / f"{item['layer']}.yaml"
+            template = space_tier_directory / "infrastructures" / item["group"] / f"{item['layer']}.yaml"
             stack.execute(
                 strategy=DeploySpaceStackLifecycleStrategy(
                     region=settings.AWS_REGION,
