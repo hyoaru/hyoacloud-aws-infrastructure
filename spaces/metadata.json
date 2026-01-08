@@ -1,0 +1,10 @@
+{
+  "tier": "space",
+  "order": [
+    { "group": "identity", "layer": "discovery-policy-identity" },
+    { "group": "identity", "layer": "discovery-policy-cost" },
+    { "group": "identity", "layer": "discovery-policy-observability" },
+    { "group": "identity", "layer": "management-policy-identity" },
+    { "group": "identity", "layer": "access-unit-devops" }
+  ]
+}
