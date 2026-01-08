@@ -17,6 +17,13 @@ Resources:
                 "aws:MultiFactorAuthPresent": "true"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/AdministratorAccess"
+      Tags:
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "core"
+        - Key: Layer
+          Value: "identity-access-unit-administrator"
   AssumeAdministratorHumanRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:

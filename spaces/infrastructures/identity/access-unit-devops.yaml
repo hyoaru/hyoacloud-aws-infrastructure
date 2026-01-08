@@ -21,6 +21,13 @@ Resources:
             Condition:
               Bool:
                 "aws:MultiFactorAuthPresent": "true"
+      Tags:
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "identity-access-unit-devops"
   AssumeDevOpsEngineerHumanRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
