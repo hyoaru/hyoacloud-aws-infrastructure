@@ -21,11 +21,6 @@ Resources:
             Condition:
               Bool:
                 "aws:MultiFactorAuthPresent": "true"
-      ManagedPolicyArns:
-        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-identity-services-discovery-policy-arn}}"
-        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-identity-services-management-policy-arn}}"
-        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-cost-services-discovery-policy-arn}}"
-        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-observability-services-discovery-policy-arn}}"
   AssumeDevOpsEngineerHumanRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
@@ -52,6 +47,13 @@ Resources:
       Description: "ARN for the DevOpsEngineerHumanRole"
       Type: "String"
       Value: !GetAtt "DevOpsEngineerHumanRole.Arn"
+  DevOpsEngineerHumanRoleNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name"
+      Description: "NAME for the DevOpsEngineerHumanRole"
+      Type: "String"
+      Value: !Ref "DevOpsEngineerHumanRole"
   AssumeDevOpsEngineerHumanRolePolicyArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
@@ -66,3 +68,10 @@ Resources:
       Description: "ARN for the DevOpsEngineersGroup"
       Type: "String"
       Value: !GetAtt "DevOpsEngineersGroup.Arn"
+  DevOpsEngineersGroupNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-dev-ops-engineers-group-name"
+      Description: "NAME for the DevOpsEngineersGroup"
+      Type: "String"
+      Value: !Ref "DevOpsEngineersGroup"
