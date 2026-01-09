@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Automation Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  AutomationServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-AutomationServicesManagement"
+      Description: !Sub "Allows ${Environment} read only access to specified automation services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "ManagementBase"
+            Effect: "Allow"
+            Action:
+              # SSM
+              - "ssm:PutParameter"
+              - "ssm:DeleteParameter"
+            Resource: "*"
+      Roles:
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
+
+  # Parameter Store Exports
+  AutomationServicesManagementPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-automation-services-management-policy-arn"
+      Description: "ARN for the AutomationServicesManagementPolicy"
+      Type: "String"
+      Value: !GetAtt "AutomationServicesManagementPolicy.PolicyArn"
