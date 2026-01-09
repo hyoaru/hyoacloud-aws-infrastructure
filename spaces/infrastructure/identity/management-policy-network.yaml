@@ -33,6 +33,8 @@ Resources:
               - "ec2:AllocateAddress"
               # NAT Gateways
               - "ec2:CreateNatGateway"
+              # Network ACLs
+              - "ec2:CreateNetworkAcl"
             Resource: "*"
           - Sid: "DiscoveryScopedByTags"
             Effect: "Allow"
@@ -61,6 +63,11 @@ Resources:
               - "ec2:ReleaseAddress"
               # NAT Gateways
               - "ec2:DeleteNatGateway"
+              # Network ACLs
+              - "ec2:ReplaceNetworkAclAssociation"
+              - "ec2:CreateNetworkAclEntry"
+              - "ec2:DeleteNetworkAclEntry"
+              - "ec2:DeleteNetworkAcl"
             Resource: "*"
             Condition:
               StringEquals:

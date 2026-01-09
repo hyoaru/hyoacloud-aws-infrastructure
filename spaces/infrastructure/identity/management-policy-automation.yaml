@@ -20,6 +20,7 @@ Resources:
             Effect: "Allow"
             Action:
               # SSM
+              - "ssm:GetParameters"
               - "ssm:PutParameter"
               - "ssm:DeleteParameter"
             Resource: "*"
