@@ -40,7 +40,7 @@ def destroy_space(
             metadata = json.load(file)
 
         for item in metadata["order"][::-1]:
-            template = space_tier_directory / "infrastructures" / item["group"] / f"{item['layer']}.yaml"
+            template = space_tier_directory / "infrastructure" / item["group"] / f"{item['layer']}.yaml"
             stack.execute(
                 strategy=DestroySpaceStackLifecycleStrategy(
                     region=settings.AWS_REGION,
