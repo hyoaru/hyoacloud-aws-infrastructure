@@ -1,0 +1,235 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Consolidated Core Network"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  Region:
+    Type: String
+    Description: "The region where the resources will reside."
+
+Resources:
+  # VPC
+  MainVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-vpc"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  # Subnets
+  MainPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.0.0/20
+      AvailabilityZone: !Sub "${Region}a"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-public1-${Region}a"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  MainPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.16.0/20
+      AvailabilityZone: !Sub "${Region}b"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-public2-${Region}b"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  MainPrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.128.0/20
+      AvailabilityZone: !Sub "${Region}a"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-private1-${Region}a"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  MainPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MainVpc
+      CidrBlock: 10.0.144.0/20
+      AvailabilityZone: !Sub "${Region}b"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-subnet-private2-${Region}b"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  # Route tables
+  MainPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MainVpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-rtb-public"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  MainPrivateRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MainVpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-rtb-private1-${Region}a"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  MainPrivateRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MainVpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-rtb-private2-${Region}b"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core"
+  # Subnet route table associations
+  MainPublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPublicSubnet1
+      RouteTableId: !Ref MainPublicRouteTable
+  MainPublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPublicSubnet2
+      RouteTableId: !Ref MainPublicRouteTable
+  MainPrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPrivateSubnet1
+      RouteTableId: !Ref MainPrivateRouteTable1
+  MainPrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref MainPrivateSubnet2
+      RouteTableId: !Ref MainPrivateRouteTable2
+
+  # Parameter Store Exports
+  MainVpcId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-vpc-id"
+      Description: "ID of the MainVpc"
+      Type: "String"
+      Value: !GetAtt MainVpc.VpcId
+  MainVpcCidrBlock:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-vpc-cidr-block"
+      Description: "CidrBlock of the MainVpc"
+      Type: "String"
+      Value: !GetAtt MainVpc.CidrBlock
+  # Subnets
+  MainPublicSubnet1Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-public-subnet1-id"
+      Description: "ID of the MainPublicSubnet1"
+      Type: "String"
+      Value: !GetAtt MainPublicSubnet1.SubnetId
+  MainPublicSubnet2Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-public-subnet2-id"
+      Description: "ID of the MainPublicSubnet2"
+      Type: "String"
+      Value: !GetAtt MainPublicSubnet2.SubnetId
+  MainPrivateSubnet1Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-private-subnet1-id"
+      Description: "ID of the MainPrivateSubnet1"
+      Type: "String"
+      Value: !GetAtt MainPrivateSubnet1.SubnetId
+  MainPrivateSubnet2Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-private-subnet2-id"
+      Description: "ID of the MainPrivateSubnet2"
+      Type: "String"
+      Value: !GetAtt MainPrivateSubnet2.SubnetId
+  # Route tables
+  MainPublicRouteTableId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-public-route-table-id"
+      Description: "ID of the MainPublicRouteTable"
+      Type: "String"
+      Value: !GetAtt MainPublicRouteTable.RouteTableId
+  MainPrivateRouteTable1Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-public-route-table1-id"
+      Description: "ID of the MainPrivateRouteTable1"
+      Type: "String"
+      Value: !GetAtt MainPrivateRouteTable1.RouteTableId
+  MainPrivateRouteTable2Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-public-route-table2-id"
+      Description: "ID of the MainPrivateRouteTable2"
+      Type: "String"
+      Value: !GetAtt MainPrivateRouteTable2.RouteTableId
+

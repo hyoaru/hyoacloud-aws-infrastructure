@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Identity Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  IdentityServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-IdentityServicesManagement"
+      Description: !Sub "Allows ${Environment} read only access to specified identity services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "IAMManagementScoped"
+            Effect: "Allow"
+            Action:
+              # Groups
+              - "iam:CreateGroup"
+              - "iam:DeleteGroup"
+              - "iam:AddUserToGroup"
+              - "iam:RemoveUserFromGroup"
+              - "iam:AttachGroupPolicy"
+              - "iam:DetachGroupPolicy"
+              # Roles
+              - "iam:CreateRole"
+              - "iam:DeleteRole"
+              - "iam:AttachRolePolicy"
+              - "iam:DetachRolePolicy"
+              - "iam:TagRole"
+              - "iam:UntagRole"
+              # Policies
+              - "iam:CreatePolicy"
+              - "iam:DeletePolicy"
+              - "iam:TagPolicy"
+              - "iam:UntagPolicy"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+      Roles:
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
+
+  # Parameter Store Exports
+  IdentityServicesManagementPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-identity-services-management-policy-arn"
+      Description: "ARN for the IdentityServicesManagementPolicy"
+      Type: "String"
+      Value: !GetAtt "IdentityServicesManagementPolicy.PolicyArn"

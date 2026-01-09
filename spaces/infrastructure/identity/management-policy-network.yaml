@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Network Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  NetworkServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-NetworkServicesManagement"
+      Description: !Sub "Allows ${Environment} read only access to specified network services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "ManagementBase"
+            Effect: "Allow"
+            Action:
+              # Tagging
+              - "ec2:CreateTags"
+              # VPCs
+              - "ec2:CreateVpc"
+              # Subnets
+              - "ec2:CreateSubnet"
+              # Route Tables
+              - "ec2:CreateRouteTable"
+              # Internet Gateways
+              - "ec2:CreateInternetGateway"
+              # Elastic IPs
+              - "ec2:AllocateAddress"
+              # NAT Gateways
+              - "ec2:CreateNatGateway"
+            Resource: "*"
+          - Sid: "DiscoveryScopedByTags"
+            Effect: "Allow"
+            Action:
+              # Tagging
+              - "ec2:DeleteTags"
+              # VPCs
+              - "ec2:DeleteVpc"
+              - "ec2:ModifyVpcAttribute"
+              # Subnets
+              - "ec2:DisassociateRouteTable"
+              - "ec2:DeleteSubnet"
+              # Route Tables
+              - "ec2:DeleteRouteTable"
+              # Internet Gateways
+              - "ec2:DeleteInternetGateway"
+              # Route Tables
+              - "ec2:AssociateRouteTable"
+              - "ec2:DisassociateRouteTable"
+              - "ec2:CreateRoute"
+              - "ec2:DeleteRoute"
+              # Internet Gateways
+              - "ec2:AttachInternetGateway"
+              - "ec2:DetachInternetGateway"
+              # Elastic IPs
+              - "ec2:ReleaseAddress"
+              # NAT Gateways
+              - "ec2:DeleteNatGateway"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+      Roles:
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
+
+  # Parameter Store Exports
+  NetworkServicesManagementPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-network-services-management-policy-arn"
+      Description: "ARN for the NetworkServicesManagementPolicy"
+      Type: "String"
+      Value: !GetAtt "NetworkServicesManagementPolicy.PolicyArn"

@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Infrastructure Services Discovery Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  InfrastructureServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-InfrastructureServicesDiscovery"
+      Description: !Sub "Allows ${Environment} read only access to specified infrastructure services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "DiscoveryBase"
+            Effect: "Allow"
+            Action:
+              # CloudFormation
+              - "cloudformation:GetTemplateSummary"
+              - "cloudformation:ListStacks"
+            Resource: "*"
+          - Sid: "DiscoveryScopedByPrefix"
+            Effect: "Allow"
+            Action:
+              # CloudFormation
+              - "cloudformation:DescribeChangeSet"
+              - "cloudformation:DescribeStacks"
+              - "cloudformation:DescribeStackEvents"
+            Resource:
+              - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*/*"
+              - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*"
+      Roles:
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
+
+  # Parameter Store Exports
+  InfrastructureServicesDiscoveryPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-infrastructure-services-discovery-policy-arn"
+      Description: "ARN for the InfrastructureServicesDiscoveryPolicy"
+      Type: "String"
+      Value: !GetAtt "InfrastructureServicesDiscoveryPolicy.PolicyArn"

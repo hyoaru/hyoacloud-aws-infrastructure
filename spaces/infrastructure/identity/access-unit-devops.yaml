@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: DevOps Access Consolidated"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  DevOpsEngineerHumanRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-DevOpsEngineer"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Condition:
+              Bool:
+                "aws:MultiFactorAuthPresent": "true"
+      Tags:
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Layer
+          Value: "identity-access-unit-devops"
+  AssumeDevOpsEngineerHumanRolePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-AssumeDevOpsEngineerHumanRole"
+      Description: !Sub "Allows users to assume the ${Environment}-DevOpsEngineer role."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Resource: !GetAtt DevOpsEngineerHumanRole.Arn
+  DevOpsEngineersGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-DevOpsEngineers"
+      ManagedPolicyArns:
+        - !GetAtt AssumeDevOpsEngineerHumanRolePolicy.PolicyArn
+
+  # Parameter Store Exports
+  DevOpsEngineerHumanRoleArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-dev-ops-engineer-human-role-arn"
+      Description: "ARN for the DevOpsEngineerHumanRole"
+      Type: "String"
+      Value: !GetAtt "DevOpsEngineerHumanRole.Arn"
+  DevOpsEngineerHumanRoleNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name"
+      Description: "NAME for the DevOpsEngineerHumanRole"
+      Type: "String"
+      Value: !Ref "DevOpsEngineerHumanRole"
+  AssumeDevOpsEngineerHumanRolePolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-assume-dev-ops-engineer-human-role-policy-arn"
+      Description: "ARN for the AssumeDevOpsEngineerHumanRolePolicy"
+      Type: "String"
+      Value: !GetAtt "AssumeDevOpsEngineerHumanRolePolicy.PolicyArn"
+  DevOpsEngineersGroupArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-dev-ops-engineers-group-arn"
+      Description: "ARN for the DevOpsEngineersGroup"
+      Type: "String"
+      Value: !GetAtt "DevOpsEngineersGroup.Arn"
+  DevOpsEngineersGroupNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-dev-ops-engineers-group-name"
+      Description: "NAME for the DevOpsEngineersGroup"
+      Type: "String"
+      Value: !Ref "DevOpsEngineersGroup"
