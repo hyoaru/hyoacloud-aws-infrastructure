@@ -37,6 +37,8 @@ Resources:
               # Elastic IPs
               - "ec2:DescribeAddresses"
               - "ec2:DescribeIpamPools"
+              - "ec2:DescribePublicIpv4Pools"
+              - "ec2:DescribeCoipPools"
               # Endpoints
               - "ec2:DescribeVpcEndpoints"
               # Instance Connect Endpoints
