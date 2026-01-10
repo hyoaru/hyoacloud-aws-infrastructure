@@ -34,8 +34,12 @@ Resources:
               - "iam:TagRole"
               - "iam:UntagRole"
               # Policies
+              - "iam:GetPolicy"
+              - "iam:GetPolicyVersion"
               - "iam:CreatePolicy"
+              - "iam:CreatePolicyVersion"
               - "iam:DeletePolicy"
+              - "iam:DeletePolicyVersion"
               - "iam:TagPolicy"
               - "iam:UntagPolicy"
             Resource:
