@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Consolidated Core Network Connectivity Extension - NAT"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  Region:
+    Type: String
+    Description: "The region where the resources will reside."
+
+Resources:
+  # Elastic IPs
+  NatGatewayEip1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-nat-eip-${Region}a"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core-connectivity-extension-nat"
+  NatGatewayEip2:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-nat-eip-${Region}b"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core-connectivity-extension-nat"
+  # NAT Gateways
+  NatGateway1:
+    Type: AWS::EC2::NatGateway
+    DependsOn: NatGatewayEip1
+    Properties:
+      AllocationId: !GetAtt NatGatewayEip1.AllocationId
+      SubnetId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-public-subnet1-id}}"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-natgw-${Region}a"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core-connectivity-extension-nat"
+  NatGateway2:
+    Type: AWS::EC2::NatGateway
+    DependsOn: NatGatewayEip2
+    Properties:
+      AllocationId: !GetAtt NatGatewayEip2.AllocationId
+      SubnetId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-public-subnet2-id}}"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-natgw-${Region}b"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core-connectivity-extension-nat"
+  # Routes
+  NatRoute1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-private-route-table1-id}}"
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway1
+  NatRoute2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-private-route-table2-id}}"
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway2
+
+  # Parameter Store Exports
+  NatGatewayEip1Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-nat-gateway-eip1-id"
+      Description: "ID of the NatGatewayEip1"
+      Type: String
+      Value: !GetAtt NatGatewayEip1.AllocationId
+  NatGatewayEip2Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-nat-gateway-eip2-id"
+      Description: "ID of the NatGatewayEip2"
+      Type: String
+      Value: !GetAtt NatGatewayEip2.AllocationId
+  # NAT Gateways
+  NatGateway1Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-nat-gateway1-id"
+      Description: "ID of the NatGateway1"
+      Type: String
+      Value: !GetAtt NatGateway1.NatGatewayId
+  NatGateway2Id:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-nat-gateway2-id"
+      Description: "ID of the NatGateway2"
+      Type: String
+      Value: !GetAtt NatGateway2.NatGatewayId

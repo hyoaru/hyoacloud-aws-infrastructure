@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Consolidated Core Network Connectivity"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+  Region:
+    Type: String
+    Description: "The region where the resources will reside."
+
+Resources:
+  # Internet gateway
+  MainInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-main-igw"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "space"
+        - Key: Layer
+          Value: "network-consolidated-network-core-connectivity"
+  # VPC gateway attachment
+  MainInternetGatewayVpcAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-vpc-id}}"
+      InternetGatewayId: !Ref MainInternetGateway
+  # Routes
+  MainPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: MainInternetGateway
+    Properties:
+      RouteTableId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-public-route-table-id}}"
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref MainInternetGateway
+
+  # Parameter Store Exports
+  MainInternetGatewayId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-internet-gateway-id"
+      Description: "ID of the MainInternetGateway"
+      Type: "String"
+      Value: !GetAtt MainInternetGateway.InternetGatewayId
+  # VPC gateway attacment
+  MainInternetGatewayVpcAttachmentId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-internet-gateway-vpc-attachment-id"
+      Description: "ID of the MainInternetGatewayVpcAttachment"
+      Type: "String"
+      Value: !Ref MainInternetGatewayVpcAttachment
+  # Routes
+  MainPublicRouteId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/network/${Environment}-main-public-route-id"
+      Description: "ID of the MainPublicRoute"
+      Type: "String"
+      Value: !Ref MainPublicRoute
