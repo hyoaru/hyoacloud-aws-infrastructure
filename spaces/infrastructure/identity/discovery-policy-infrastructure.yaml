@@ -30,6 +30,7 @@ Resources:
               - "cloudformation:DescribeChangeSet"
               - "cloudformation:DescribeStacks"
               - "cloudformation:DescribeStackEvents"
+              - "cloudformation:ListStackResources"
             Resource:
               - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*/*"
               - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*"
