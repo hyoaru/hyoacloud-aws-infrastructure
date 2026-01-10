@@ -221,14 +221,14 @@ Resources:
   MainPrivateRouteTable1Id:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub "/iac/space/network/${Environment}-main-public-route-table1-id"
+      Name: !Sub "/iac/space/network/${Environment}-main-private-route-table1-id"
       Description: "ID of the MainPrivateRouteTable1"
       Type: "String"
       Value: !GetAtt MainPrivateRouteTable1.RouteTableId
   MainPrivateRouteTable2Id:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub "/iac/space/network/${Environment}-main-public-route-table2-id"
+      Name: !Sub "/iac/space/network/${Environment}-main-private-route-table2-id"
       Description: "ID of the MainPrivateRouteTable2"
       Type: "String"
       Value: !GetAtt MainPrivateRouteTable2.RouteTableId
