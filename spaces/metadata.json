@@ -11,6 +11,13 @@
     { "group": "identity", "layer": "discovery-policy-network" },
     { "group": "identity", "layer": "management-policy-network" },
     { "group": "identity", "layer": "discovery-policy-cost" },
-    { "group": "identity", "layer": "discovery-policy-observability" }
+    { "group": "identity", "layer": "discovery-policy-observability" },
+    { "group": "network", "layer": "consolidated-network-core" },
+    { "group": "network", "layer": "consolidated-network-core-connectivity" },
+    { "group": "network", "layer": "consolidated-network-core-security" },
+    {
+      "group": "network",
+      "layer": "consolidated-network-core-connectivity-extension-nat"
+    }
   ]
 }
