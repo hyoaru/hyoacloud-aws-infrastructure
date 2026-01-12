@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two-Tier Layer: Application Load Balancer"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  AppTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${Environment}-two-tier-app-tg"
+      Port: 8080
+      Protocol: HTTP
+      VpcId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-vpc-id}}"
+      TargetType: instance
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-app-tg"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "TwoTierOwners"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "compute-application-load-balancer"
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub "${Environment}-two-tier-alb"
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups:
+        - !Sub "{{resolve:ssm:/iac/project/two-tier/network/${Environment}-alb-security-group-id}}"
+      Subnets:
+        - !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-public-subnet1-id}}"
+        - !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-public-subnet2-id}}"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-alb"
+        - Key: Environment
+          Value: !Sub "${Environment}"
+        - Key: Owner
+          Value: "TwoTierOwners"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "compute-application-load-balancer"
+  AlbListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn:
+      - AppTargetGroup
+      - ApplicationLoadBalancer
+    Properties:
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref AppTargetGroup
+
+  # Parameter Store Exports
+  AppTargetGroupArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/compute/${Environment}-app-target-group-arn"
+      Description: "ARN of the AppTargetGroup"
+      Type: String
+      Value: !GetAtt "AppTargetGroup.TargetGroupArn"
+  ApplicationLoadBalancerArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/compute/${Environment}-application-load-balancer-arn"
+      Description: "ARN of the ApplicationLoadBalancer"
+      Type: String
+      Value: !GetAtt "ApplicationLoadBalancer.LoadBalancerArn"
+  AlbListenerArn:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/compute/${Environment}-alb-listener-arn"
+      Description: "ARN of the AlbListener"
+      Type: String
+      Value: !GetAtt "AlbListener.ListenerArn"
