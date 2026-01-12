@@ -22,6 +22,14 @@ Resources:
               # Launch Templates
               - "ec2:DescribeLaunchTemplateVersions"
               - "ec2:DescribeLaunchTemplates"
+              # Target Groups
+              - "elasticloadbalancing:DescribeTargetGroups"
+              - "elasticloadbalancing:DescribeTargetHealth"
+              - "elasticloadbalancing:DescribeTargetGroupAttributes"
+              # Load Balancers
+              - "elasticloadbalancing:DescribeTags"
+              - "elasticloadbalancing:DescribeLoadBalancers"
+              - "elasticloadbalancing:DescribeListeners"
             Resource: "*"
           - Sid: "DiscoveryScopedByTags"
             Effect: "Allow"
@@ -39,12 +47,23 @@ Resources:
               - "ec2:CreateTags"
               # Launch Templates
               - "ec2:CreateLaunchTemplate"
+              # Target Groups
+              - "elasticloadbalancing:AddTags"
             Resource: "*"
           - Sid: "ManagementScopedByTags"
             Effect: "Allow"
             Action:
               # Tagging
               - "ec2:DeleteTags"
+              # Target Groups
+              - "elasticloadbalancing:RemoveTags"
+              - "elasticloadbalancing:CreateTargetGroup"
+              - "elasticloadbalancing:DeleteTargetGroup"
+              # Load Balancers
+              - "elasticloadbalancing:CreateLoadBalancer"
+              - "elasticloadbalancing:DeleteLoadBalancer"
+              - "elasticloadbalancing:CreateListener"
+              - "elasticloadbalancing:DeleteListener"
             Resource: "*"
             Condition:
               StringEquals:
