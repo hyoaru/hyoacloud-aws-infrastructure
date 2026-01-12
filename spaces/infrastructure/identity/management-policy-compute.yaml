@@ -37,14 +37,14 @@ Resources:
             Action:
               # Tagging
               - "ec2:CreateTags"
+              # Launch Templates
+              - "ec2:CreateLaunchTemplate"
             Resource: "*"
-          - Sid: "DiscoveryScopedByTags"
+          - Sid: "ManagementScopedByTags"
             Effect: "Allow"
             Action:
               # Tagging
               - "ec2:DeleteTags"
-              # Launch Templates
-              - "ec2:CreateLaunchTemplate"
             Resource: "*"
             Condition:
               StringEquals:
