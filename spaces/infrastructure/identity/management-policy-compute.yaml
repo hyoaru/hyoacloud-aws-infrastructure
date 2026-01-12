@@ -16,6 +16,22 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
+          - Sid: "DiscoveryBase"
+            Effect: "Allow"
+            Action:
+              # Launch Templates
+              - "ec2:DescribeLaunchTemplateVersions"
+              - "ec2:DescribeLaunchTemplates"
+            Resource: "*"
+          - Sid: "DiscoveryScopedByTags"
+            Effect: "Allow"
+            Action:
+              # Launch Templates
+              - "ec2:GetLaunchTemplateData"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
           - Sid: "ManagementBase"
             Effect: "Allow"
             Action:

@@ -16,6 +16,13 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
+          - Sid: "DiscoveryBase"
+            Effect: "Allow"
+            Action:
+              # SSM
+              - "ssm:GetParameters"
+              - "ssm:DescribeParameters"
+            Resource: "*"
           - Sid: "ManagementBase"
             Effect: "Allow"
             Action:

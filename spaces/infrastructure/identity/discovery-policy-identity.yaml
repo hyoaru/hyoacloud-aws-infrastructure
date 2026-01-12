@@ -76,8 +76,6 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/${Environment}-*"
-      Roles:
-        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
 
   # Parameter Store Exports
   IdentityServicesDiscoveryPolicyArnParameter:

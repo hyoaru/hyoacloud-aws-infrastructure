@@ -16,6 +16,24 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
+          - Sid: "DiscoveryBase"
+            Effect: "Allow"
+            Action:
+              # CloudFormation
+              - "cloudformation:GetTemplateSummary"
+              - "cloudformation:ListStacks"
+            Resource: "*"
+          - Sid: "DiscoveryScopedByPrefix"
+            Effect: "Allow"
+            Action:
+              # CloudFormation
+              - "cloudformation:DescribeChangeSet"
+              - "cloudformation:DescribeStacks"
+              - "cloudformation:DescribeStackEvents"
+              - "cloudformation:ListStackResources"
+            Resource:
+              - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*/*"
+              - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/*${Environment}*"
           - Sid: "ManagementBase"
             Effect: "Allow"
             Action:
@@ -23,7 +41,7 @@ Resources:
               - "cloudformation:CreateChangeSet"
               - "cloudformation:ValidateTemplate"
             Resource: "*"
-          - Sid: "DiscoveryScopedByPrefix"
+          - Sid: "ManagementScopedByPrefix"
             Effect: "Allow"
             Action:
               # CloudFormation

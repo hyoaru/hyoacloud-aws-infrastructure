@@ -16,7 +16,67 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "IAMManagementScoped"
+          - Sid: "DiscoveryBase"
+            Effect: "Allow"
+            Action:
+              # Summary
+              - "iam:GetAccountSummary"
+              - "iam:ListAccountAliases"
+              # Groups
+              - "iam:ListGroups"
+              # Users
+              - "iam:GetUser"
+              - "iam:ListUsers"
+              - "iam:ListGroupsForUser"
+              - "iam:ListUserPolicies"
+              - "iam:ListAttachedUserPolicies"
+              - "iam:ListUserTags"
+              # Roles
+              - "iam:ListRoles"
+              # Identity Providers
+              - "iam:ListProviders"
+              - "iam:ListOpenIDConnectProviders"
+              - "iam:GetOpenIDConnectProvider"
+              # Policies
+              - "iam:ListPolicies"
+              # Identity
+              - "iam:GetAccountPasswordPolicy"
+              - "iam:GetLoginProfile"
+              # Access Keys
+              - "iam:ListAccessKeys"
+              - "iam:GetAccessKeyLastUsed"
+              - "iam:ListMFADevices"
+              - "iam:ListSigningCertificates"
+              - "iam:ListSSHPublicKeys"
+              - "iam:ListServiceSpecificCredentials"
+              # Instance Profile
+            Resource: "*"
+          - Sid: "DiscoveryScoped"
+            Effect: "Allow"
+            Action:
+              # Groups
+              - "iam:GetGroup"
+              - "iam:ListGroupPolicies"
+              - "iam:ListAttachedGroupPolicies"
+              # Roles
+              - "iam:GetRole"
+              - "iam:ListInstanceProfilesForRole"
+              - "iam:ListRolePolicies"
+              - "iam:ListAttachedRolePolicies"
+              # Policies
+              - "iam:ListPolicyVersions"
+              - "iam:ListEntitiesForPolicy"
+              - "iam:GenerateServiceLastAccessedDetails"
+              # Instance Profiles
+              - "iam:GetInstanceProfile"
+              - "iam:ListInstanceProfilesForRole"
+              - "iam:ListInstanceProfileTags"
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/${Environment}-*"
+          - Sid: "ManagementScoped"
             Effect: "Allow"
             Action:
               # Groups
