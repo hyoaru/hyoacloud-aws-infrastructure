@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two Tier Layer: Network Services Discovery Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  NetworkServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-TwoTierNetworkServicesDiscovery"
+      Description: !Sub "Allows ${Environment} read only access to specified network services for Two-Tier project"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "DiscoveryBase"
+            Effect: "Allow"
+            Action:
+              # Security Group
+              - "ec2:DescribeSecurityGroups"
+              - "ec2:DescribeSecurityGroupRules"
+              - "ec2:DescribeSecurityGroupVpcAssociations"
+            Resource: "*"
+      Roles:
+        - !Sub "{{resolve:ssm:/iac/project/two-tier/identity/${Environment}-owner-human-role-name}}"
+        - !Sub "{{resolve:ssm:/iac/project/two-tier/identity/${Environment}-developer-human-role-name}}"
+
+  # Parameter Store Exports
+  NetworkServicesDiscoveryPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-network-services-discovery-policy-arn"
+      Description: "ARN for the NetworkServicesDiscoveryPolicy"
+      Type: "String"
+      Value: !GetAtt "NetworkServicesDiscoveryPolicy.PolicyArn"

@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two-Tier Layer: Launch Template"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub "${Environment}-two-tier-app-server-launch-template"
+      LaunchTemplateData:
+        ImageId: ami-00d8fc944fb171e29
+        InstanceType: t3.micro
+        IamInstanceProfile:
+          Arn: !Sub "{{resolve:ssm:/iac/project/two-tier/identity/${Environment}-ssm-node-management-instance-profile-arn}}"
+        SecurityGroupIds:
+          - !Sub "{{resolve:ssm:/iac/project/two-tier/network/${Environment}-app-security-group-id}}"
+        MetadataOptions:
+          InstanceMetadataTags: enabled
+        UserData:
+          Fn::Base64: |
+            #!/bin/bash
+            nohup python3 -m http.server 8080 > server.log 2>&1 &
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub "${Environment}-two-tier-app-server-0x"
+              - Key: Environment
+                Value: !Sub "${Environment}"
+              - Key: Owner
+                Value: "TwoTierOwners"
+              - Key: Platform
+                Value: "two-tier"
+              - Key: Layer
+                Value: "network-launch-template"
+          - ResourceType: volume
+            Tags:
+              - Key: Environment
+                Value: !Sub "${Environment}"
+              - Key: Owner
+                Value: "TwoTierOwners"
+              - Key: Platform
+                Value: "two-tier"
+              - Key: Layer
+                Value: "network-launch-template"
+          - ResourceType: network-interface
+            Tags:
+              - Key: Environment
+                Value: !Sub "${Environment}"
+              - Key: Owner
+                Value: "TwoTierOwners"
+              - Key: Platform
+                Value: "two-tier"
+              - Key: Layer
+                Value: "network-launch-template"
+
+  # Parameter Store Exports
+  LaunchTemplateIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/compute/${Environment}-launch-template-id"
+      Description: "ID of the LaunchTemplate"
+      Type: String
+      Value: !GetAtt "LaunchTemplate.LaunchTemplateId"
+  LaunchTemplateLatestVersionNumber:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/compute/${Environment}-launch-template-latest-version-number"
+      Description: "Latest version number of the LaunchTemplate"
+      Type: String
+      Value: !GetAtt "LaunchTemplate.LatestVersionNumber"

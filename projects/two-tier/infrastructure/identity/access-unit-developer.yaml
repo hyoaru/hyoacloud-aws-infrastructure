@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two Tier Layer: Developer Access Consolidated"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  DeveloperHumanRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-TwoTierDeveloper"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Condition:
+              Bool:
+                "aws:MultiFactorAuthPresent": "true"
+      Tags:
+        - Key: Owner
+          Value: "TwoTierOwners"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Layer
+          Value: "identity-access-unit-developer"
+  AssumeDeveloperHumanRolePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-AssumeTwoTierDeveloperHumanRole"
+      Description: !Sub "Allows users to assume the ${Environment}-TwoTierDeveloper role."
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Resource: !GetAtt DeveloperHumanRole.Arn
+  DevelopersGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "${Environment}-TwoTierDevelopers"
+      ManagedPolicyArns:
+        - !GetAtt AssumeDeveloperHumanRolePolicy.PolicyArn
+
+  # Parameter Store Exports
+  DeveloperHumanRoleArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-developer-human-role-arn"
+      Description: "ARN for the DeveloperHumanRole"
+      Type: "String"
+      Value: !GetAtt "DeveloperHumanRole.Arn"
+  DeveloperHumanRoleNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-developer-human-role-name"
+      Description: "Name for the DeveloperHumanRole"
+      Type: "String"
+      Value: !Ref "DeveloperHumanRole"
+  AssumeDeveloperHumanRolePolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-assume-developer-human-role-policy-arn"
+      Description: "ARN for the AssumeDeveloperHumanRolePolicy"
+      Type: "String"
+      Value: !GetAtt "AssumeDeveloperHumanRolePolicy.PolicyArn"
+  DevelopersGroupArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-developers-group-arn"
+      Description: "ARN for the DevelopersGroup"
+      Type: "String"
+      Value: !GetAtt "DevelopersGroup.Arn"
+  DevelopersGroupNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-developers-group-name"
+      Description: "Name for the DevelopersGroup"
+      Type: "String"
+      Value: !Ref "DevelopersGroup"

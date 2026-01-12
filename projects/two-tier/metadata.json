@@ -1,0 +1,11 @@
+{
+  "tier": "project",
+  "project": "two-tier",
+  "order": [
+    { "group": "identity", "layer": "access-unit-project-owner" },
+    { "group": "network", "layer": "consolidated-network-security" },
+    { "group": "compute", "layer": "launch-template" },
+    { "group": "compute", "layer": "application-load-balancer" },
+    { "group": "compute", "layer": "auto-scaling-group" }
+  ]
+}

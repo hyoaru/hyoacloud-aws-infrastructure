@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two Tier Layer: SSM Node Management Service Role"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  SsmNodeManagementServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-TwoTierSsmNodeManagementServiceRole"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: "sts:AssumeRole"
+            Principal:
+              Service: "ec2.amazonaws.com"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      Tags:
+        - Key: Owner
+          Value: "TwoTierOwners"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Layer
+          Value: "identity-service-role-ssm-node-management"
+  SsmNodeManagementInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub "${Environment}-TwoTierSsmNodeManagementInstanceProfile"
+      Roles:
+        - !Ref SsmNodeManagementServiceRole
+
+  # Parameter Store Exports
+  SsmNodeManagementServiceRoleArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-ssm-node-management-service-role-arn"
+      Description: "ARN for the SsmNodeManagementServiceRole"
+      Type: "String"
+      Value: !GetAtt "SsmNodeManagementServiceRole.Arn"
+  SsmNodeManagementServiceRoleNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-ssm-node-management-service-role-name"
+      Description: "Name for the SsmNodeManagementServiceRole"
+      Type: "String"
+      Value: !Ref "SsmNodeManagementServiceRole"
+  SsmNodeManagementInstanceProfileArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/identity/${Environment}-ssm-node-management-instance-profile-arn"
+      Description: "ARN for the SsmNodeManagementInstanceProfile"
+      Type: "String"
+      Value: !GetAtt "SsmNodeManagementInstanceProfile.Arn"

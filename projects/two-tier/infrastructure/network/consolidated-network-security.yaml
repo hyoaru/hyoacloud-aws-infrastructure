@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Two-Tier Layer: Consolidated Network Security"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  # Security Groups
+  AlbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub "${Environment} ALB Security Group for Two-Tier Project"
+      VpcId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-vpc-id}}"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-web-alb-sg"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "network-consolidated-network-security"
+  AppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub "${Environment} App Server Security Group for Two-Tier Project"
+      VpcId: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-vpc-id}}"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Environment}-two-tier-app-server-sg"
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Owner
+          Value: "DevOpsEngineers"
+        - Key: Platform
+          Value: "two-tier"
+        - Key: Layer
+          Value: "network-consolidated-network-security"
+  # Security Group Rules
+  WebAlbSgIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref AlbSecurityGroup
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+      Description: "Allow public HTTP"
+  AppServerSgIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref AppSecurityGroup
+      IpProtocol: tcp
+      FromPort: 8080
+      ToPort: 8080
+      CidrIp: !Sub "{{resolve:ssm:/iac/space/network/${Environment}-main-vpc-cidr-block}}"
+  AppToInternetSgEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref AppSecurityGroup
+      IpProtocol: -1
+      CidrIp: 0.0.0.0/0
+      Description: "Allow ALL outbound traffic to the internet"
+
+  # Parameter Store Exports
+  AlbSecurityGroupIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/network/${Environment}-alb-security-group-id"
+      Description: "ID of the AlbSecurityGroup"
+      Type: String
+      Value: !GetAtt AlbSecurityGroup.GroupId
+  AppSecurityGroupIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/project/two-tier/network/${Environment}-app-security-group-id"
+      Description: "ID of the AppSecurityGroup"
+      Type: String
+      Value: !GetAtt AppSecurityGroup.GroupId
