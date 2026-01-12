@@ -53,6 +53,8 @@ Resources:
               - "ec2:DescribeNetworkAcls"
               # Security Groups
               - "ec2:DescribeSecurityGroups"
+              - "ec2:DescribeSecurityGroupRules"
+              - "ec2:DescribeSecurityGroupVpcAssociations"
               # Customer Gateways
               - "ec2:DescribeCustomerGateways"
               # Virtual Private Gateways
@@ -79,6 +81,7 @@ Resources:
             Action:
               # VPC
               - "ec2:DescribeVpcAttribute"
+              - "ec2:GetSecurityGroupsForVpc"
             Resource: "*"
             Condition:
               StringEquals:

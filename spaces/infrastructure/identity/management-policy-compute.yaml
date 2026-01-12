@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Compute Services Management Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  ComputeServicesManagementPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-ComputeServicesManagement"
+      Description: !Sub "Allows ${Environment} read only access to specified compute services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "ManagementBase"
+            Effect: "Allow"
+            Action:
+              # Tagging
+              - "ec2:CreateTags"
+            Resource: "*"
+          - Sid: "DiscoveryScopedByTags"
+            Effect: "Allow"
+            Action:
+              # Tagging
+              - "ec2:DeleteTags"
+              # Launch Templates
+              - "ec2:CreateLaunchTemplate"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+      Roles:
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
+
+  # Parameter Store Exports
+  ComputeServicesManagementPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-compute-services-management-policy-arn"
+      Description: "ARN for the ComputeServicesManagementPolicy"
+      Type: "String"
+      Value: !GetAtt "ComputeServicesManagementPolicy.PolicyArn"

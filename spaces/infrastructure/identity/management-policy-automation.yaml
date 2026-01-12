@@ -20,9 +20,9 @@ Resources:
             Effect: "Allow"
             Action:
               # SSM
-              - "ssm:GetParameters"
               - "ssm:PutParameter"
               - "ssm:DeleteParameter"
+              - "ssm:DeleteParameters"
             Resource: "*"
       Roles:
         - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"

@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Space Layer: Compute Services Discovery Policy"
+
+Parameters:
+  Environment:
+    Type: String
+    Description: "The environment name to prefix resource names."
+    AllowedValues: [dev, stage, prod]
+
+Resources:
+  ComputeServicesDiscoveryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Sub "${Environment}-ComputeServicesDiscovery"
+      Description: !Sub "Allows ${Environment} read only access to specified compute services"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "DiscoveryBase"
+            Effect: "Allow"
+            Action:
+              # Launch Templates
+              - "ec2:DescribeLaunchTemplateVersions"
+              - "ec2:DescribeLaunchTemplates"
+            Resource: "*"
+          - Sid: "DiscoveryScopedByTags"
+            Effect: "Allow"
+            Action:
+              # Launch Templates
+              - "ec2:GetLaunchTemplateData"
+            Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:ResourceTag/Environment": !Ref Environment
+      Roles:
+        - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
+
+  # Parameter Store Exports
+  ComputeServicesDiscoveryPolicyArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub "/iac/space/identity/${Environment}-compute-services-discovery-policy-arn"
+      Description: "ARN for the ComputeServicesDiscoveryPolicy"
+      Type: "String"
+      Value: !GetAtt "ComputeServicesDiscoveryPolicy.PolicyArn"
