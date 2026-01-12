@@ -16,7 +16,7 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "IAMDiscoveryBase"
+          - Sid: "DiscoveryBase"
             Effect: "Allow"
             Action:
               # Summary
@@ -49,8 +49,9 @@ Resources:
               - "iam:ListSigningCertificates"
               - "iam:ListSSHPublicKeys"
               - "iam:ListServiceSpecificCredentials"
+              # Instance Profile
             Resource: "*"
-          - Sid: "IAMDiscoveryScoped"
+          - Sid: "DiscoveryScoped"
             Effect: "Allow"
             Action:
               # Groups
@@ -66,10 +67,15 @@ Resources:
               - "iam:ListPolicyVersions"
               - "iam:ListEntitiesForPolicy"
               - "iam:GenerateServiceLastAccessedDetails"
+              # Instance Profiles
+              - "iam:GetInstanceProfile"
+              - "iam:ListInstanceProfilesForRole"
+              - "iam:ListInstanceProfileTags"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/${Environment}-*"
       Roles:
         - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
 

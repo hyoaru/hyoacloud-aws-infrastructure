@@ -33,6 +33,7 @@ Resources:
               - "iam:DetachRolePolicy"
               - "iam:TagRole"
               - "iam:UntagRole"
+              - "iam:PassRole"
               # Policies
               - "iam:GetPolicy"
               - "iam:GetPolicyVersion"
@@ -42,10 +43,18 @@ Resources:
               - "iam:DeletePolicyVersion"
               - "iam:TagPolicy"
               - "iam:UntagPolicy"
+              # Instance Profiles
+              - "iam:CreateInstanceProfile"
+              - "iam:DeleteInstanceProfile"
+              - "iam:AddRoleToInstanceProfile"
+              - "iam:RemoveRoleFromInstanceProfile"
+              - "iam:TagInstanceProfile"
+              - "iam:UntagInstanceProfile"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:group/${Environment}-*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/${Environment}-*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/${Environment}-*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/${Environment}-*"
       Roles:
         - !Sub "{{resolve:ssm:/iac/space/identity/${Environment}-dev-ops-engineer-human-role-name}}"
 
